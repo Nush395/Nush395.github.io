@@ -59,7 +59,7 @@ date: 2020-06-06
             the likelihood is given by $$p(y|w_1,w_2) = \Phi(y(w_1-w_2))$$
             <p>
             <button data-toggle="collapse" data-target="#likelihood-derivation">Click to see likelihood derivation</button>
-            <div id="likelihood-derivation" class="collapse">
+            <div id="likelihood-derivation" class="collapse" style="border:thin">
                 $$t = w_1 - w_2 + n \Rightarrow p(t|w_1,w_2) = \mathcal{N}(w_1-w_2,\,1)$$
                 As y is a binary variable let's work out each case:
                 $$p(y=1|w_1,w_2) = p(t>0|w_1,w_2) = \Phi(w_1-w_2)$$
@@ -76,7 +76,7 @@ date: 2020-06-06
             $$
             <p>
             <button data-toggle="collapse" data-target="#posterior-derivation">Click to see likelihood derivation</button>
-            <div id="posterior-derivation" class="collapse">
+            <div id="posterior-derivation" class="collapse" style="border:thin">
                 \begin{align}
                 p(w_1,w_2|y) &= \frac{p(w_1)p(w_2)p(y|w_1,w_2)}{\iint p(w_1)p(w_2)p(y|w_1,w_2) \,dw_1\,dw_2}
                            \\  &= \frac{\mathcal{N}(\mu_1,\,\sigma_1^{2})\mathcal{N}(\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))}
