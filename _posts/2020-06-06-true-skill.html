@@ -72,7 +72,7 @@ date: 2020-06-06
             Using Bayes' theorem we can now work out the posterior distribution of the skills given the game outcome:
             \begin{align}
                 p(w_1,w_2|y) &= \frac{p(w_1)p(w_2)p(y|w_1,w_2)}{\iint p(w_1)p(w_2)p(y|w_1,w_2) \,dw_1\,dw_2}
-                             &= \frac{\mathcal{N}(\mu_1,\,\sigma_1^{2})\mathcal{N}(\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))}
+                           \\  &= \frac{\mathcal{N}(\mu_1,\,\sigma_1^{2})\mathcal{N}(\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))}
                                      {\iint \mathcal{N}(\mu_1,\,\sigma_1^{2})\mathcal{N}(\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))\,dw_1\,dw_2}
             \end{align}
         </li>
