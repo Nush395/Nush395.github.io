@@ -74,6 +74,10 @@ date: 2020-06-06
                 p(w_1,w_2|y) &= \frac{p(w_1)p(w_2)p(y|w_1,w_2)}{\iint p(w_1)p(w_2)p(y|w_1,w_2) \,dw_1\,dw_2}
                            \\  &= \frac{\mathcal{N}(\mu_1,\,\sigma_1^{2})\mathcal{N}(\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))}
                                      {\iint \mathcal{N}(\mu_1,\,\sigma_1^{2})\mathcal{N}(\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))\,dw_1\,dw_2}
+                           \\ &= \frac{\mathcal{N}(\mu_1,\,\sigma_1^{2})\mathcal{N}(\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))}
+                                      {\Phi(\frac{y(\mu_1-\mu_2)}{\sqrt{1+\sigma_1^{2}+\sigma_2^{2}}}}
+                           \\ &= \frac{\mathcal{N}(\frac{\sigma_1^{2}\mu_2 + \sigma_2^{2}\mu_1}{\sigma_1^{2}+\sigma_2^{2}},\,\frac{1}{\sigma_1^{-2}+\sigma_2^{-2}})}
+                                      {\Phi(\frac{y(\mu_1-\mu_2)}{\sqrt{1+\sigma_1^{2}+\sigma_2^{2}}}}
             \end{align}
         </li>
     </ol>
