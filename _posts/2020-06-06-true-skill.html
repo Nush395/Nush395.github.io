@@ -28,6 +28,9 @@ date: 2020-06-06
     probability that one will win against another and predict a games' outcome. To illustrate this we can
     build a model for the outcome of a game involving two players.
 </p>
+<h3>
+    Toy model
+</h3>
 <p>
     <ul>
         <li>
@@ -45,6 +48,9 @@ date: 2020-06-06
         </li>
     </ul>
 </p>
+<h3>
+    Bayesian treatment of the model
+</h3>
 <p>
     We can take a Bayesian treatment of this model by placing a prior probability over the
     initial skills and then use the observed game outcome to compute the posterior probability
@@ -71,19 +77,17 @@ date: 2020-06-06
         <li>
             Using Bayes' theorem we can now work out the posterior distribution of the skills given the game outcome:
             $$
-            p(w_1,w_2|y) = \frac{\mathcal{N}(\frac{\sigma_1^{2}\mu_2 + \sigma_2^{2}\mu_1}{\sigma_1^{2}+\sigma_2^{2}},\,\frac{1}{\sigma_1^{-2}+\sigma_2^{-2}})\Phi(y(w_1-w_2))}
-                                {\Phi(\frac{y(\mu_1-\mu_2)}{\sqrt{1+\sigma_1^{2}+\sigma_2^{2}}})}
+            p(w_1,w_2|y) = \frac{\mathcal{N}(w_1;\mu_1,\,\sigma_1^{2})\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))}
+                                      {\Phi(\frac{y(\mu_1-\mu_2)}{\sqrt{1+\sigma_1^{2}+\sigma_2^{2}}})}
             $$
             <p>
             <button data-toggle="collapse" data-target="#posterior-derivation">Click to see posterior derivation</button>
             <div id="posterior-derivation" class="collapse">
                 \begin{align}
                 p(w_1,w_2|y) &= \frac{p(w_1)p(w_2)p(y|w_1,w_2)}{\iint p(w_1)p(w_2)p(y|w_1,w_2) \,dw_1\,dw_2}
-                           \\  &= \frac{\mathcal{N}(\mu_1,\,\sigma_1^{2})\mathcal{N}(\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))}
-                                     {\iint \mathcal{N}(\mu_1,\,\sigma_1^{2})\mathcal{N}(\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))\,dw_1\,dw_2}
-                           \\ &= \frac{\mathcal{N}(\mu_1,\,\sigma_1^{2})\mathcal{N}(\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))}
-                                      {\Phi(\frac{y(\mu_1-\mu_2)}{\sqrt{1+\sigma_1^{2}+\sigma_2^{2}}})}
-                           \\ &= \frac{\mathcal{N}(\frac{\sigma_1^{2}\mu_2 + \sigma_2^{2}\mu_1}{\sigma_1^{2}+\sigma_2^{2}},\,\frac{1}{\sigma_1^{-2}+\sigma_2^{-2}})\Phi(y(w_1-w_2))}
+                           \\  &= \frac{\mathcal{N}(w_1;\mu_1,\,\sigma_1^{2})\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))}
+                                     {\iint \mathcal{N}(w_1;\mu_1,\,\sigma_1^{2})\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))\,dw_1\,dw_2}
+                           \\ &= \frac{\mathcal{N}(w_1;\mu_1,\,\sigma_1^{2})\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))}
                                       {\Phi(\frac{y(\mu_1-\mu_2)}{\sqrt{1+\sigma_1^{2}+\sigma_2^{2}}})}
                 \end{align}
             </div>
@@ -91,4 +95,19 @@ date: 2020-06-06
         </li>
     </ol>
 </p>
+<h3>
+    Problems with the model
+</h3>
+<p>
+    We would like to be able to use this posterior as the prior distribution for the next games
+    that these players play. The ideal situation would be for the prior and posterior to be conjugate
+    distributions. For an explanation on conjugate priors and distributions see
+    <a href="https://en.wikipedia.org/wiki/Conjugate_prior">here</a>. The issue with the current posterior is that $w_1$
+    and $w_2$ are correlated and the posterior is not conjugate to the prior.
+</p>
+<h2>
+    Expectation Propagation
+</h2>
+<p>
 
+</p>
