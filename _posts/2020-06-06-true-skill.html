@@ -21,13 +21,30 @@ date: 2020-06-06
     by Jeff Moser which explains a lot of the detail behind the equations in the original paper.
 </p>
 <h2>
-    Overview
+    Introduction
 </h2>
 <p>
     We want to model players' skills, that is some attribute of a players that can be used to compare the
     probability that one will win against another and predict a games' outcome. To illustrate this we can
-    build a model for the outcome of a game involving two players. Take Player 1 to have skill $w_1$ and
-    Player 2 to have skill $w_2$ ($w_i \in \mathbb{R}$)
+    build a model for the outcome of a game involving two players.
+</p>
+<p>
+    <ul>
+        <li>
+            Take Player 1 to have skill $w_1$ and  Player 2 to have skill $w_2$ ($w_i \in \mathbb{R}$).
+        </li>
+        <li>
+            Compute the difference in the player skills: $s = w_1 - w_2$
+        </li>
+        <li>
+            Add some Gaussian noise ($n \sim \mathcal{N}(0,\,\sigma^{2}) to account for the uncertainty in the match.
+            $t=s+n$
+        </li>
+        <li>
+            The game outcome will be determined by $y=sign(t)$, $y=1$ implies player 1 won and $y=2$ implies Player 2 won.
+        </li>
+    </ul>
+
 </p>
 
 
