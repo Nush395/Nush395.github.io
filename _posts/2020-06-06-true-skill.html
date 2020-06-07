@@ -52,12 +52,11 @@ date: 2020-06-06
     <ol>
         <li>
             Choosing a Gaussian distribution to represent the prior probabilities we have:
-            $$w_i \sim \mathcal{N}(\mu_u,\,\sigma_i^{2})$$
+            $$w_i \sim \mathcal{N}(\mu_i,\,\sigma_i^{2})$$
         </li>
         <li>
-
-                If we take the game noise to have standard deviation of 1, $n \sim \mathcal{N}(0,\,1)$ for simplicity then,
-            the likelihood is given by $p(y|w_1,w_2) = \Phi(y(w_1-w_2))$
+            If we take the game noise to have standard deviation of 1, $n \sim \mathcal{N}(0,\,1)$ for simplicity then,
+            the likelihood is given by $$p(y|w_1,w_2) = \Phi(y(w_1-w_2))$$
             <p>
             <button data-toggle="collapse" data-target="#likelihood-derivation">Likelihood derivation</button>
             <div id="likelihood-derivation" class="collapse">
@@ -68,7 +67,13 @@ date: 2020-06-06
                 $$\therefore p(y|w_1,w_2) = \Phi(y(w_1-w_2))$$
             </div>
             </p>
-
+        </li>
+        <li>
+            Using Bayes' theorem we can now work out the posterior of the skills given the game outcome:
+            \begin{align}
+                p(w_1,w_2|y) &= \frac{p(w_1)p(w_2)p(y|w_1,w_2)}{\iint p(w_1)p(w_2)p(y|w_1,w_2) \,dw_1\,dw_2}
+                             &= \frac{\mathcal{N}(\mu_1,\,\sigma_1^{2})\mathcal{N}(\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))}
+                                     {\iint \mathcal{N}(\mu_1,\,\sigma_1^{2})\mathcal{N}(\mu_2,\,\sigma_2^{2})\Phi(y(w_1-w_2))\,dw_1\,dw_2}
         </li>
     </ol>
 </p>
