@@ -37,7 +37,7 @@ date: 2020-06-06
             Compute the difference in the player skills: $s = w_1 - w_2$.
         </li>
         <li>
-            Add some Gaussian noise ($n \sim \mathcal{N}(0,\,\sigma^{2}$)) to account for the uncertainty in the match.
+            Add some Gaussian noise ($n \sim \mathcal{N}(0,\,\sigma^{2}$)) to account for the uncertainty in the match:
             $t=s+n$.
         </li>
         <li>
@@ -52,17 +52,18 @@ date: 2020-06-06
     <ol>
         <li>
             Choosing a Gaussian distribution to represent the prior probabilities we have:
-            $$w_i \sim \mathcal{N}(\mu_u,\,\sigma_i^{2}$)
+            $$w_i \sim \mathcal{N}(\mu_u,\,\sigma_i^{2})$$
         </li>
         <li>
-            If we take the game noise to have standard deviation of 1 for simplicity then,
+            If we take the game noise to have standard deviation of 1, $n \sim \mathcal{N}(0,\,1)$ for simplicity then,
             the likelihood is given by $p(y|w_1,w_2) = \Phi(y(w_1-w_2))$
             <button data-toggle="collapse" data-target="#likelihood-derivation">Likelihood derivation</button>
             <div id="likelihood-derivation" class="collapse">
-                $$t = w_1 - w_2 + n,            p(t|w_1,w_2) = \matchcal{N}(w_1-w_2,\,1)$$
+                $$t = w_1 - w_2 + n \Rightarrow p(t|w_1,w_2) = \mathcal{N}(w_1-w_2,\,1)$$
                 As y is a binary variable let's work out each case:
                 $$p(y=1|w_1,w_2) = p(t>0|w_1,w_2) = \Phi(w_1-w_2)$$
-                $$p(y=-1|w_1,w_2) = p(t<0|w_1,w_2) = 1 - \Phi(w_1-w_2)
+                $$p(y=-1|w_1,w_2) = p(t<0|w_1,w_2) = 1 - \Phi(w_1-w_2) = \Phi(-(w_1-w_2))$$
+                $$\therefore p(y|w_1,w_2) = \Phi(y(w_1-w_2))$$
             </div>
         </li>
     </ol>
