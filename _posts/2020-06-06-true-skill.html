@@ -55,8 +55,10 @@ date: 2020-06-06
             $$w_i \sim \mathcal{N}(\mu_u,\,\sigma_i^{2})$$
         </li>
         <li>
-            If we take the game noise to have standard deviation of 1, $n \sim \mathcal{N}(0,\,1)$ for simplicity then,
+
+                If we take the game noise to have standard deviation of 1, $n \sim \mathcal{N}(0,\,1)$ for simplicity then,
             the likelihood is given by $p(y|w_1,w_2) = \Phi(y(w_1-w_2))$
+            <p>
             <button data-toggle="collapse" data-target="#likelihood-derivation">Likelihood derivation</button>
             <div id="likelihood-derivation" class="collapse">
                 $$t = w_1 - w_2 + n \Rightarrow p(t|w_1,w_2) = \mathcal{N}(w_1-w_2,\,1)$$
@@ -65,6 +67,8 @@ date: 2020-06-06
                 $$p(y=-1|w_1,w_2) = p(t<0|w_1,w_2) = 1 - \Phi(w_1-w_2) = \Phi(-(w_1-w_2))$$
                 $$\therefore p(y|w_1,w_2) = \Phi(y(w_1-w_2))$$
             </div>
+            </p>
+
         </li>
     </ol>
 </p>
