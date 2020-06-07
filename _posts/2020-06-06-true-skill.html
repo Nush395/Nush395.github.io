@@ -34,17 +34,37 @@ date: 2020-06-06
             Take Player 1 to have skill $w_1$ and  Player 2 to have skill $w_2$ ($w_i \in \mathbb{R}$).
         </li>
         <li>
-            Compute the difference in the player skills: $s = w_1 - w_2$
+            Compute the difference in the player skills: $s = w_1 - w_2$.
         </li>
         <li>
-            Add some Gaussian noise ($n \sim \mathcal{N}(0,\,\sigma^{2}$) to account for the uncertainty in the match.
-            $t=s+n$
+            Add some Gaussian noise ($n \sim \mathcal{N}(0,\,\sigma^{2}$)) to account for the uncertainty in the match.
+            $t=s+n$.
         </li>
         <li>
-            The game outcome will be determined by $y=sign(t)$; $y=1$ implies player 1 won and $y=-1$ implies Player 2 won.
+            The game outcome will be determined by $y=sign(t)$; $y=1$ implies Player 1 won and $y=-1$ implies Player 2 won.
         </li>
     </ul>
-
 </p>
-
+<p>
+    We can take a Bayesian treatment of this model by placing a prior probability over the
+    initial skills and then use the observed game outcome to compute the posterior probability
+    of the skills given the game outcome. Let's go ahead and do that then...
+    <ol>
+        <li>
+            Choosing a Gaussian distribution to represent the prior probabilities we have:
+            $$w_i \sim \mathcal{N}(\mu_u,\,\sigma_i^{2}$)
+        </li>
+        <li>
+            If we take the game noise to have standard deviation of 1 for simplicity then,
+            the likelihood is given by $p(y|w_1,w_2) = \Phi(y(w_1-w_2))$
+            <button data-toggle="collapse" data-target="#likelihood-derivation">Likelihood derivation</button>
+            <div id="likelihood-derivation" class="collapse">
+                $$t = w_1 - w_2 + n,            p(t|w_1,w_2) = \matchcal{N}(w_1-w_2,\,1)$$
+                As y is a binary variable let's work out each case:
+                $$p(y=1|w_1,w_2) = p(t>0|w_1,w_2) = \Phi(w_1-w_2)$$
+                $$p(y=-1|w_1,w_2) = p(t<0|w_1,w_2) = 1 - \Phi(w_1-w_2)
+            </div>
+        </li>
+    </ol>
+</p>
 
