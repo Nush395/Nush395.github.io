@@ -64,7 +64,9 @@ date: 2020-06-06
             $$t=s+n$$.
         </li>
         <li>
-            We can say that the game outcome could be determined by $y=sign(t)$; $$y=1 implies Player 1 won and y=-1 implies Player 2 won.$$
+            We can say that the game outcome could be determined by $y=sign(t)$;
+            $$y=1 \text{implies Player 1 won and}$$
+            $$y=-1 \text{implies Player 2 won.}$$
         </li>
     </ul>
 </p>
@@ -133,8 +135,9 @@ date: 2020-06-06
 <p>
     One of the concepts that the TrueSkill paper introduced to me was that of factor graphs.
     <a href="https://en.wikipedia.org/wiki/Factor_graph">Factor graphs</a>
-    are a type of probabilistic graphical model that allow us to represent the product factor structure of a function
-    and take advantage of this structure to enable efficient computation using something called the Sum-Product
+    are a type of probabilistic graphical model that allow us to represent the product factor structure of a function as
+    a bipartite graph of factors and their variables.
+    We can take advantage of this structure to enable efficient computation using something called the Sum-Product
     algorithm that I'll explain in a bit below.  To get an intuition for why using the factor structure of a function is
     useful consider the calculation:
     $$ab+ac$$
@@ -161,9 +164,19 @@ date: 2020-06-06
             Multiply the answer by a.
         </li>
     </ol>
-    Coming back to the the example at hand in TrueSkill we will want to be able to get marginal distributions from our
-    joint distribution which will involve summing over the joint distribution. By turning sums of products into products
-    of sums we can get similar improvements in our marginalisation.
+    Coming back to the the example at hand we will want to be able to get marginal distributions from our
+    joint distribution of player skills and game outcomes which will involve summing over the joint distribution.
+    By turning sums of products into products of sums we can get similar improvements in our marginalisation.
+</p>
+<h2>
+    Sum-Product Algorithm
+</h2>
+<h2>
+    True Skill Factor Graph
+</h2>
+<p>
+    Now that we understand factor graphs let's apply them to our problem. We can represent the toy model we described
+    above with a factor graph that looks like this.
 </p>
 <h2>
     Expectation Propagation
