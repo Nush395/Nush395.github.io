@@ -188,11 +188,33 @@ date: 2020-06-06
         <img src="{{site.baseurl}}/assets/img/factor_graph_two_player.png" height="450"/>
     </p>
     <p>
-        And now let's pass messages for a game in which Player 1 was the winner:
+        Let's now again use this model and the sum product message passing algorithm to compute the
+        updated skill marginal for Player 1 in a game where Player 1 wins:
+        <ol>
+            <li>
+                First we pass messages from the prior factors to the variable $w_i$. This is simply the
+                Gaussian $\mathcal{N}(w_i;\mu_i,\,\sigma_i^{2})$
+            </li>
+            <li>
+                Next we compute the message from the skill variables $w_i$ to the game factor $g$, again this
+                is straightforward as messages from variable to a factor is simply the product of all incoming messages
+                to the variable except the incoming message from that factor. There's only one other incoming
+                message to $w_i$, the message that just arrived from the prior factor, so we simply pass that on.
+            </li>
+            <li>
+                Now we want to pass the message from the game factor $f$ "down" to the performance variable $t$.
+                Messages from factors sum out all variables except the receiving one, because we're dealing with
+                continuous variables here that sum becomes an integral.
+                $$m_{h \to t} = \iint \! f(x) \,  \mathrm{d}w_1\mathrm{d}w_2$$
+            </li>
+            <li>
+
+            </li>
+        </ol>
     </p>
     </div>
 </p>
-<div>
+<div style="clear:both">
     <h2>
     Expectation Propagation
     </h2>
