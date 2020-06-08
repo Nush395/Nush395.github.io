@@ -195,8 +195,7 @@ date: 2020-06-06
         </p>
         <ol>
             <li>
-                First we pass messages from the prior factors to the variable $w_i$. This is simply the
-                Gaussian
+                First we pass messages from the prior factors to the variable $w_i$. This is simply:
                 $$m_{prior \to w_i}=\mathcal{N}(w_i;\mu_i,\,\sigma_i^{2})$$
             </li>
             <li>
@@ -204,13 +203,32 @@ date: 2020-06-06
                 is straightforward as messages from variable to a factor is simply the product of all incoming messages
                 to the variable except the incoming message from that factor. There's only one other incoming
                 message to $w_i$, the message that just arrived from the prior factor, so we simply pass that on.
+                $$m_{w_i \to f}=\mathcal{N}(w_i;\mu_i,\,\sigma_i^{2})$$
             </li>
             <li>
                 Now we want to pass the message from the game factor $f$ "down" to the performance variable $t$.
                 Messages from factors sum out all variables except the receiving one, because we're dealing with
                 continuous variables here that sum becomes an integral.
-                $$m_{h \to t} = \iint \! f(x) \,  \mathrm{d}w_1\mathrm{d}w_2$$
+                $$m_{f \to t} = \iint \! \mathcal{N}(t;w_1-w_2,1)\mathcal{N}(w_1;\mu_1,\,\sigma_1^{2})\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2}) \,  \mathrm{d}w_1\mathrm{d}w_2$$
             </li>
+            <li>
+                We know that Player 1 won so we must have observed a the game outcome of $y=1$. Therefore we also pass
+                a message from the game factor $k$ "up" to variable k.
+                $$m_{g \to t} = \delta(1-sign(t))$$
+            </li>
+            <li>
+                Again messages from variables to a factor are simply the product of all messages incoming to the variable
+                except from that factor, so we simply pass the delta function along.
+                $$m_{t \to f} = \delta(1-sign(t))$$
+            </li>
+            <li>
+                The message from the factor to $w_1$ is the product of the incoming messages from $t$ and $w_2$ and the
+                factor summing out all the variables except $w_1$.
+                \begin{align}
+                m_{f \to w_1} &= \iint \! \delta(1-sign(t))\mathcal{N}(t;w_1-w_2,1)\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2}) \,  \mathrm{d}w_1\mathrm{d}w_2
+                \end{align}
+            </li>
+
         </ol>
     </div>
 </div>
