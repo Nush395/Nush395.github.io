@@ -7,44 +7,64 @@ date: 2020-06-06
     Overview
 </h2>
 <p>
-    This is a post to document the learnings I made on my several week journey to understanding the
-    TrueSkill algorithm created by Microsoft Research for ranking teams of players in games. This post
-    is an accompaniment to the <a href="https://github.com/Nush395/TrueSkill">library</a> I created
-    where I replicated the
+    In this post I'd like to give an explanation of the TrueSkill algorithm created by Microsoft Research for ranking
+    teams of players in games. My hope is that if can gather my thoughts down coherently enough to explain the algorithm to
+    someone else then I'll finally have completed  my journey in understanding the TrueSkill algorithm.
+    This post is an accompaniment to the open source
+    <a href="https://github.com/Nush395/TrueSkill">Python implementation</a>
+    I created where I replicated the
     <a href="https://www.microsoft.com/en-us/research/publication/trueskilltm-a-bayesian-skill-rating-system/">
         original paper.
     </a>
-    Along with the original paper another really helpful resource I found is this
+    Along with the original paper another really helpful resource I'd thoroughly encourage you to check out is this
     <a href="https://www.moserware.com/assets/computing-your-skill/The%20Math%20Behind%20TrueSkill.pdf">
         article
     </a>
-    by Jeff Moser which explains a lot of the detail behind the equations in the original paper.
+    by Jeff Moser which explains the intuition and a lot of the detail behind the equations very well. That article
+    saved me a lot of pain by explaining some of the complicated concepts and likely explains most of what I'm going
+    to explain in this post. That said this is as much an exercise for me to check my understanding by explaining so
+    let's crack on anyway!
 </p>
 <h2>
-    Introduction
+    An Intro to Ranking
 </h2>
 <p>
-    We want to model players' skills, that is some attribute of a players that can be used to compare the
-    probability that one will win against another and predict a games' outcome. To illustrate this we can
-    build a model for the outcome of a game involving two players.
+    This all started with me getting repeatedly thrashed at table football by the same person, let's call them Player A
+    over and over again. You don't have to feel sorry for me because everyone in my office gets repeatedly thrashed by
+    Player A at table football. Occasionally one of us will get lucky and beat them but it's fairly obvious that the
+    person that wins the most games against everyone individually is the best, I don't need a fancy algorithm to tell
+    me that. It does however leave a lot of questions unanswered. How good is Player A? If they go and play someone who is
+    the best in another office who should I be rationally favouring? Who's the second best in my office and how far away
+    from Player A are they? If I had a bunch of data points of matches between players and their outcomes I should be
+    able to answer these questions. That last question in particular points towards a way of answering these questions.
+    If we imagine that each player has some <i>skill</i> attribute that represents how good they are then we could look
+    at the relative difference between different players' skills to compare who is better but also how much better they
+    are. It also makes sense to model this <i>skill</i> attribute with a probability distribution as in the real world
+    we're never going to know for certain what the exact value is but we could have a good idea of what the expectation
+    of that quantity is and how certain we are of our estimate. Awesome, so we know have a way of representing someone's
+    goodness at the game. The next bit is figuring out how we could model who to rationally bet on and also how we could
+    use that data of matches and game outcomes to better estimate a player's skill. To illustrate this in the next
+    chapter let's build a toy model of a game involving two players using this idea that each player has some skill value
+    and we expect a player with higher skill to win.
 </p>
 <h3>
     Toy model
 </h3>
 <p>
+    We can construct a simple toy model of a game between two players as follows
     <ul>
         <li>
             Take Player 1 to have skill $w_1$ and  Player 2 to have skill $w_2$ ($w_i \in \mathbb{R}$).
         </li>
         <li>
-            Compute the difference in the player skills: $s = w_1 - w_2$.
+            Compute the difference in the player skills: $$s = w_1 - w_2$$
         </li>
         <li>
             Add some Gaussian noise ($n \sim \mathcal{N}(0,\,\sigma^{2}$)) to account for the uncertainty in the match:
-            $t=s+n$.
+            $$t=s+n$$.
         </li>
         <li>
-            The game outcome will be determined by $y=sign(t)$; $y=1$ implies Player 1 won and $y=-1$ implies Player 2 won.
+            We can say that the game outcome could be determined by $y=sign(t)$; $$y=1 implies Player 1 won and y=-1 implies Player 2 won.$$
         </li>
     </ul>
 </p>
@@ -54,7 +74,7 @@ date: 2020-06-06
 <p>
     We can take a Bayesian treatment of this model by placing a prior probability over the
     initial skills and then use the observed game outcome to compute the posterior probability
-    of the skills given the game outcome. Let's go ahead and do that then...
+    of the skills given the game outcome using Bayes' theorem. Let's go ahead and do that then...
     <ol>
         <li>
             Choosing a Gaussian distribution to represent the prior probabilities we have:
@@ -99,11 +119,51 @@ date: 2020-06-06
     Problems with the model
 </h3>
 <p>
-    We would like to be able to use this posterior as the prior distribution for the next games
-    that these players play. The ideal situation would be for the prior and posterior to be conjugate
-    distributions. For an explanation on conjugate priors and distributions see
-    <a href="https://en.wikipedia.org/wiki/Conjugate_prior">here</a>. The issue with the current posterior is that $w_1$
-    and $w_2$ are correlated and the posterior is not conjugate to the prior.
+    Even for this simple model we've arrived at something pretty ugly looking for our posterior. Our skill variables
+    $w_1$ and $w_2$ have become correlated and it's not possible to factorise this distribution. It's not really obvious
+    how we answer any of our above questions easily with a posterior like this. We'd also ideally like to be able to use
+    this posterior as the prior for these players in their next game but it's not possible to marginalise out either of
+    the player's skills. To proceed we'll have to take another approach but before we do, it will be useful to take a
+    break to introduce the topic of Factor graphs, another concept used in the TrueSkill paper that I will talk about in
+    the next section. If you're familiar with factor graphs then feel free to skip ahead!
+</p>
+<h2>
+    Factor graphs and message passing
+</h2>
+<p>
+    One of the concepts that the TrueSkill paper introduced to me was that of factor graphs.
+    <a href="https://en.wikipedia.org/wiki/Factor_graph">Factor graphs</a>
+    are a type of probabilistic graphical model that allow us to represent the product factor structure of a function
+    and take advantage of this structure to enable efficient computation using something called the Sum-Product
+    algorithm that I'll explain in a bit below.  To get an intuition for why using the factor structure of a function is
+    useful consider the calculation:
+    $$ab+ac$$
+    To get the answer we have to do 3 operations.
+    <ol>
+        <li>
+            $a \times b$
+        </li>
+        <li>
+            $a \times c$
+        </li>
+        <li>
+            Sum the two terms.
+        </li>
+    </ol>
+    We could do this more efficiently if we notice that we can factorise the above expression to get:
+    $$a(b+c)$$
+    Now we only have to do 2 operations.
+    <ol>
+        <li>
+            $b+c$
+        </li>
+        <li>
+            Multiply the answer by a.
+        </li>
+    </ol>
+    Coming back to the the example at hand in TrueSkill we will want to be able to get marginal distributions from our
+    joint distribution which will involve summing over the joint distribution. By turning sums of products into products
+    of sums we can get similar improvements in our marginalisation.
 </p>
 <h2>
     Expectation Propagation
