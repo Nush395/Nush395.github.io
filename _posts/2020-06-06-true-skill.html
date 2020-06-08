@@ -184,12 +184,15 @@ date: 2020-06-06
 </h2>
 <p>
     We can represent the toy model we described above with a factor graph that looks like this:
-    <div><p style="float: left;">
+<div class="row">
+    <div class="col-sm-4">
         <img src="{{site.baseurl}}/assets/img/factor_graph_two_player.png" height="400"/>
-    </p>
-    <p>
-        Let's now again use this model and the sum product message passing algorithm to compute the
-        updated skill marginal for Player 1 in a game where Player 1 wins:
+    </div>
+    <div class="col-sm-8">
+        <p>
+            Let's now again use this model and the sum product message passing algorithm to compute the
+            updated skill marginal for Player 1 in a game where Player 1 wins:
+        </p>
         <ol>
             <li>
                 First we pass messages from the prior factors to the variable $w_i$. This is simply the
@@ -207,17 +210,8 @@ date: 2020-06-06
                 continuous variables here that sum becomes an integral.
                 $$m_{h \to t} = \iint \! f(x) \,  \mathrm{d}w_1\mathrm{d}w_2$$
             </li>
-            <li>
-
-            </li>
         </ol>
-    </p>
     </div>
-</p>
-<div style="clear:both">
-    <h2>
-    Expectation Propagation
-    </h2>
 </div>
 
 
