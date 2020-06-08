@@ -28,6 +28,9 @@ date: 2020-06-06
 <h2>
     An Intro to Ranking
 </h2>
+    <h4>
+        An example
+    </h4>
 <p>
     This all started with me getting repeatedly thrashed at table football by the same person, let's call them Player A
     over and over again. You don't have to feel sorry for me because everyone in my office gets repeatedly thrashed by
@@ -36,7 +39,13 @@ date: 2020-06-06
     me that. It does however leave a lot of questions unanswered. How good is Player A? If they go and play someone who is
     the best in another office who should I be rationally favouring? Who's the second best in my office and how far away
     from Player A are they? If I had a bunch of data points of matches between players and their outcomes I should be
-    able to answer these questions. That last question in particular points towards a way of answering these questions.
+    able to answer these questions.
+</p>
+    <h4>
+        Skill
+    </h4>
+<p>
+    That last question in particular points towards a way of answering these questions.
     If we imagine that each player has some <i>skill</i> attribute that represents how good they are then we could look
     at the relative difference between different players' skills to compare who is better but also how much better they
     are. It also makes sense to model this <i>skill</i> attribute with a probability distribution as in the real world
@@ -138,7 +147,7 @@ date: 2020-06-06
     are a type of probabilistic graphical model that allow us to represent the product factor structure of a function as
     a bipartite graph of factors and their variables.
     We can take advantage of this structure to enable efficient computation using something called the Sum-Product
-    algorithm that I'll explain in a bit below.  To get an intuition for why using the factor structure of a function is
+    algorithm. To get an intuition for why using the factor structure of a function is
     useful consider the calculation:
     $$ab+ac$$
     To get the answer we have to do 3 operations.
@@ -166,17 +175,16 @@ date: 2020-06-06
     </ol>
     Coming back to the the example at hand we will want to be able to get marginal distributions from our
     joint distribution of player skills and game outcomes which will involve summing over the joint distribution.
-    By turning sums of products into products of sums we can get similar improvements in our marginalisation.
+    By turning sums of products into products of sums we can get similar improvements in our marginalisation. To avoid
+    making this post to long I'll simply encourage you to read about the theory behind factor graphs and the sum-product
+    algorithm on your own and simply brush past to applying the concept to our toy model.
 </p>
-<h2>
-    Sum-Product Algorithm
-</h2>
 <h2>
     True Skill Factor Graph
 </h2>
 <p>
-    Now that we understand factor graphs let's apply them to our problem. We can represent the toy model we described
-    above with a factor graph that looks like this.
+    We can represent the toy model we described above with a factor graph that looks like this:
+    <img src="{{site.baseurl}}/assets/img/factor_graph_two_player.png">
 </p>
 <h2>
     Expectation Propagation
