@@ -224,10 +224,10 @@ date: 2020-06-06
                 <div id="cumgauss-derivation" class="collapse">
                     \begin{align}
                         m_{f \to w_1} &= \iint \! \delta(1-sign(t))\mathcal{N}(t;w_1-w_2,1)\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2}) \,  \mathrm{d}t\mathrm{d}w_2
-                                      &= \int \! \delta(1-sign(t)) \int \mathcal{N}(t;w_1-w_2,1)\mathcal{N}(w_2;\mu_2,\sigma_2^{2} \, \mathrm{d}w_2\mathrm{d}t
-                                      &= \int \! \delta(1-sign(t))\mathcal{N}(t;w_1-\mu_2,\sigma_2^{2}+1) \, \mathrm{d}t
-                                      &= \int_{0}^{\infty} \! \mathcal{N}(t;w_1-\mu_2,\sigma_2^{2}+1) \, \mathrm{d}t
-                                      &= \Phi(\frac{\mu_2-w_1}{\sigma_2^{2}+1})
+                                   \\   &= \int \! \delta(1-sign(t)) \int \mathcal{N}(t;w_1-w_2,1)\mathcal{N}(w_2;\mu_2,\sigma_2^{2} \, \mathrm{d}w_2\mathrm{d}t
+                                   \\   &= \int \! \delta(1-sign(t))\mathcal{N}(t;w_1-\mu_2,\sigma_2^{2}+1) \, \mathrm{d}t
+                                    \\  &= \int_{0}^{\infty} \! \mathcal{N}(t;w_1-\mu_2,\sigma_2^{2}+1) \, \mathrm{d}t
+                                   \\   &= \Phi(\frac{\mu_2-w_1}{\sigma_2^{2}+1})
                     \end{align}
                     Going from the second to third line I've used the result for the marginal distribution where the conditional
                     and other marginal distribution are Gaussian. (See Chapter 2.3.3 of Bishops book.)
