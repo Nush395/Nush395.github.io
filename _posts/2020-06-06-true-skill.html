@@ -233,6 +233,14 @@ date: 2020-06-06
                     and other marginal distribution are Gaussian. (See Chapter 2.3.3 of Bishops book.)
                 </div>
             </li>
+            <li>
+                Finally we can work out the marginal distribution for $w_1$ by taking the product of all incoming
+                factors.
+                \begin{align}
+                    p(w_1) &= m_{f \to w_1} \times m_{prior \to w_1}
+                           &= \mathcal{N}(w_1;\mu_1,\sigma_1^{2})\Phi(\frac{\mu_2-w_1}{\sigma_2^{2}+1})
+                \end{align}
+            </li>
 
         </ol>
     </div>
