@@ -245,6 +245,41 @@ date: 2020-06-06
         </ol>
     </div>
 </div>
+<p>
+    A similar expression falls out for the updated skill marginal for $w_2$ by passing messages the other way.
+    So we've got an expression for the posterior distributions for the skill variables having observed a game outcome, awesome.
+    There's still a problem with this posterior though. We'd like to be able to use this posterior as the prior for the next
+    game in which Player 1 plays. The problem that arises then is that because we have that pesky cumulative Gaussian left over
+    upon playing the next game our new posterior will be the product of this prior with another
+    cumulative Gaussian, taking us up to two cumulative Gaussians, a third game and we'll be at three cumulative Gaussians and so
+    on till the $n\mathrm{th}$ game where we'll have accumulated $n-1$ cumulative Gaussian factors.
+    Each of these cumulative Gaussian factors has 2 parameters associated to it (as well as the original 2 parameters for the
+    first Gaussian) and so after n games we will have
+    $(n-1)*2+2=n$ parameters associated with a player's prior distribution. So the question is there a way to update the prior
+    without increasing the number of parameters required to model it. Well you won't be surprised that the folks that wrote the
+    paper came up with a solution and that's what we'll talk about in the next section.
+</p>
+<h2>
+    Expectation Propogation
+</h2>
+<p>
+    (I believe) the intuition for solving the problem we encountered above comes from the insight that if all our messages were Gaussian
+    then when we multiplied them together the product would also be another Gaussian. So let's go back to our factor graph
+    for the toy model and try and figure out where the non-Gaussian messages arose from. After a brief scroll up and down the page
+    we're back and we see that it's step 3 in the above message passing that introduces the non-Gaussian message. If we want everything
+    to be Gaussian then it might make sense to approximate this message as a Gaussian.
+</p>
+<p>
+    Of course there's a Bayesian ML technique for that called Expectation Propogation (EP) which allows us to approximate
+    one probability distribution $p(x)$ with another one $q(x)$ by minimising the KL divergence between them. Further it turns
+    out that if $q(x)$ is Gaussian then minimising the KL divergence is equivalent to moment matching whereby
+    (for the 1d case) $p(x)$ has mean and variance equal to the mean and variance of $q(x)$.
+</p>
+<p>
+    There's still one issue though, unfortunately the distribution that we are trying to moment match (the delta function)
+    doesn't have a well defined variance. That doesn't stop the authors of TrueSkill though, they use a little trick that is
+    my favourite part of the paper to get round this problem.
+</p>
 
 
 
