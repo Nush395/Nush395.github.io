@@ -195,15 +195,15 @@ date: 2020-06-06
         </p>
         <ol>
             <li>
-                First we pass messages from the prior factors to the variable $w_i$. This is simply:
-                $$m_{prior \to w_i}=\mathcal{N}(w_i;\mu_i,\,\sigma_i^{2})$$
+                First we pass messages from the prior factors to the variable $w_2$. This is simply:
+                $$m_{prior \to w_2}=\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2})$$
             </li>
             <li>
-                Next we compute the message from the skill variables $w_i$ to the game factor $g$, again this
+                Next we compute the message from the skill variables $w_2$ to the game factor $g$, again this
                 is straightforward as messages from variable to a factor is simply the product of all incoming messages
                 to the variable except the incoming message from that factor. There's only one other incoming
                 message to $w_i$, the message that just arrived from the prior factor, so we simply pass that on.
-                $$m_{w_i \to f}=\mathcal{N}(w_i;\mu_i,\,\sigma_i^{2})$$
+                $$m_{w_2 \to f}=\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2})$$
             </li>
             <li>
                 We know that Player 1 won so we must have observed a the game outcome of $y=1$. Therefore we also pass
