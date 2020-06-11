@@ -296,7 +296,7 @@ date: 2020-06-06
 </h4>
 <p>
     The trick then is rather than making an approximation to the message directly, we make a Gaussian approximation to the
-    marginal distribution for the $t$ variable, $t=m_{f \to t} \times m_{t \to f}$.
+    marginal distribution for the $t$ variable.
     <p>We already know what $m_{t \to f}$ is so let's quickly derive the "downwards" message.</p>
     $$m_{f \to t} = \mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})$$
     <button data-toggle="collapse" data-target="#convolution-derivation">Click to see derivation.</button>
@@ -311,11 +311,12 @@ date: 2020-06-06
     </div>
     <p>Now let's make our approximation to the marginal..</p>
     \begin{align}
-        p(t) &= \delta(1-sign(t))\mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})
+        p(t) &= m_{f \to t} \times m_{t \to f}
+            \\ &= \delta(1-sign(t))\mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})
           \\   &\approx \mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})
     \\    m_{t \to f}  &=  \frac{\mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})}{\mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})}
-    \\ \text{Dividing a univariate Gaussian by another univariate Gaussian gives us yet another univariate Gaussian.}
-m_{t \to f}  &= \frac{\mathcal{N}(t;\mu_{msg},\sigma_{msg}^{2})}
+    \\ \text{Dividing a univariate Gaussian by another univariate Gaussian gives us another univariate Gaussian.}
+\\ m_{t \to f}  &= \frac{\mathcal{N}(t;\mu_{msg},\sigma_{msg}^{2})}
     \end{align}
     I've left out the nitty gritty details here for the sake of brevity but if you would like to follow them I go through
     the derivation in finer detail in the appendix. The point is that we've now got a Gaussian message going from variable
