@@ -303,8 +303,8 @@ date: 2020-06-06
     <div id="convolution-derivation" class="collapse">
         \begin{align}
         m_{f \to t} &= \iint \! \mathcal{N}(t;w_1-w_2,1)\mathcal{N}(w_1;\mu_1,\sigma_2^{2})\mathcal{N}(w_2;\mu_2,\sigma_2^{2}) \, \mathrm{d}w_1\mathrm{d}w_2
-                    &= \int \! \mathcal{N}(t;\mu_1-w_2,\sqrt{1+\sigma_1^{2}})\mathcal{N}(w_2;\mu_2,\sigma_2^{2}) \, \mathrm{d}w_2
-                    &= \mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})
+                  \\  &= \int \! \mathcal{N}(t;\mu_1-w_2,\sqrt{1+\sigma_1^{2}})\mathcal{N}(w_2;\mu_2,\sigma_2^{2}) \, \mathrm{d}w_2
+                   \\ &= \mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})
         \end{align}
         Again making use of the result for the marginal distribution where the conditional
         and other marginal distribution are Gaussian. (See Chapter 2.3.3 of Bishops book.)
@@ -312,9 +312,9 @@ date: 2020-06-06
     <p>Now let's make our approximation to the marginal..</p>
     \begin{align}
         p(t) &= \mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})\delta(1-sign(t))
-             &\approx \mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})
-        m_{t \to f} &=  \frac{\mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})}{\mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})}
-                    &= \mathcal{N}(t;
+          \\   &\approx \mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})
+        m_{t \to f} \\ &=  \frac{\mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})}{\mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})}
+                     \\ &= \mathcal{N}(t;
     \end{align}
 
 </p>
