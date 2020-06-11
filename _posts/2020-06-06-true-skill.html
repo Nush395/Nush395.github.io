@@ -317,9 +317,10 @@ date: 2020-06-06
     \\    m_{t \to f}  &=  \frac{\mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})}{\mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})}
 \\ m_{t \to f}  &= \mathcal{N}(t;\mu_{msg},\sigma_{msg}^{2})
     \end{align}
-    I've left out the nitty gritty details here for the sake of brevity but if you would like to follow them I go through
-    the derivation in finer detail in the appendix. The point is that we've now got a Gaussian message going from variable
-    $t$ to factor $f$!
+    I've left out the nitty gritty details here for the sake of brevity. Going from the second to the third line is where we
+make our EP approximation and going from the penultimate to the final line we use the result that dividing two Gaussians gives
+you another Gaussian. If you would like to follow the the derivation in finer detail I go through that in the appendix.
+The point is that we've now got a Gaussian message going from variable $t$ to factor $f$!
 </p>
 <h2>
     Finally our (approximate) Gaussian posterior!
@@ -327,6 +328,91 @@ date: 2020-06-06
 <p>
     We now have a Gaussian message passed "up" from the variable $t$ to the factor $f$. Let's now revisit our factor graph
     and complete the posterior calculation.
+</p>
+<div class="row">
+    <div class="col-sm-4">
+        <img src="{{site.baseurl}}/assets/img/factor_graph_two_player_approx.png" height="400"/>
+    </div>
+    <div class="col-sm-8" style="overflow-y: scroll; height:400px;">
+        <p>
+            Let's now again use this model and the sum product message passing algorithm to compute the
+            updated skill marginal for Player 1 in a game where Player 1 wins:
+        </p>
+        <ol>
+            <li>
+                Again we pass messages from the prior factors to the variable $w_2$. This is simply:
+                $$m_{prior \to w_2}=\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2})$$
+            </li>
+            <li>
+                Same as before pass on the message through the variable as there are no other incoming factors.
+                $$m_{w_2 \to f}=\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2})$$
+            </li>
+            <li>
+                We can now make use of our approximation for the message from $t$ to factor $f$.
+                $$m_{t \to f} = \mathcal{N}(t;\mu_{msg},\sigma_{msg}^{2})$$
+            </li>
+            <li>
+                We can now again pass a message from factor $f$ to the variable $w_1$.
+                \begin{align}
+                    m_{f \to w_1} &= \iint \! \mathcal{N}(t;w_1-w_2,1)\mathcal{N}(t;\mu_{msg},\sigma_{msg}^{2})\mathcal{N}(w_2;\mu_2,\sigma_2^{2}) \, \mathrm{d}t\mathrm{d}w_2
+                              \\  &= \mathcal{N}(w_1;\mu_{msg}+\mu_2,\sqrt{1+\sigma_{msg}^{2}+\sigma_2^{2}})
+                \end{align}
+                Again for the sake of not putting too much detail here I'll leave this derivation to the Appendix, but the most
+                important insight is we still have a Gaussian message.
+            </li>
+            <li>
+                Finally we can work out the marginal for $w_1$ by multiplying the message from the prior factor and from the
+                game factor.
+                \begin{align}
+                p(w_1) &= m_{f \to w_1} \times m_{prior \to w_1}
+                       &= \mathcal{N}(w_1;\mu_{msg}+\mu_2,\sqrt{1+\sigma_{msg}^{2}+\sigma_2^{2}}) \mathcal{N}(w_1;\mu_1,\sqrt{\sigma_1^{2}})
+                       &= \mathcal{N}(w_1;\mu_{new},\sigma_{new})
+                \end{align}
+                Going from the second line to the final line we've used the result that multiplying two Gaussians also gives a Gaussian!
+                So we've finally got our posterior and it's Gaussian!
+            </li>
+        </ol>
+    </div>
+</div>
+<h4>
+    What's the big deal...
+</h4>
+<p>
+    That was a lot of effort to get a Gaussian posterior. The nice thing about having a Gaussian is that the posterior is
+    now conjugate to the prior and so we can easily use this posterior as the new prior without having to worry about the
+    form of the new posterior getting more complicated as we had before.
+</p>
+<h2>
+    Conclusions
+</h2>
+<p>
+    This has been a very brief summary of some parts of the TrueSkill paper. We're now armed with the knowledge of how to
+    update player's skill distributions given the outcomes of games. Now that we have a better idea of what a player's skill is
+    we can use that to answer some of those questions we asked at the beginning.
+    <h4>
+        Who to rationally bet on in a game
+    </h4>
+    <p>
+    For example if two players with skills $w_1$ and $w_2$
+    play each other what is the probability that each one wins. That's simply the likelihood we calculated earlier $p(y|w_1,w_2)$.
+    </p>
+    <h4>
+        How can I rank players
+    </h4>
+    <p>We can also use these skills to rank players. I believe that typically a single rating is taken from the marginal distribution
+    for a players skill as $\mu-3*\sigma$ as then there is a 95% chance that the player's skill is greater than that value.
+        Once we have these point estimates they can then be used to rank the players in a given game in order.
+    </p>
+    <h4>
+        Other cool applications
+    </h4>
+    <p>
+        One of the really fascinating implications of this modelling approach to estimating skills is that two players don't actually
+        have to play each other for us to be able to rank them against each other. Players are simply ranked according to their
+        performance against other players. A cool application of this was done by the Microsoft Research team who used TrueSkill
+        to rank chess players across history, even though some were not even playing in the same time period!
+    </p>
+
 </p>
 <h2>
     Appendix
