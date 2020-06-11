@@ -311,17 +311,30 @@ date: 2020-06-06
     </div>
     <p>Now let's make our approximation to the marginal..</p>
     \begin{align}
-        p(t) &= \mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})\delta(1-sign(t))
+        p(t) &= \delta(1-sign(t))\mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})
           \\   &\approx \mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})
     \\    m_{t \to f}  &=  \frac{\mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})}{\mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})}
-\\ \text{Defining} \sigma_{denom}^2 = 1+\sigma_1^{2}+\sigma_2^{2} \text{and} \mu_{denom} = \mu_1-\mu_2
-                     \\ &= \frac{\mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})}{\mathcal{N}(t;\mu_{denom},\sqrt{\sigma_{denom}^2})}
-                     \\  &= \mathcal{N}(t;\mu_{msg},\sigma_{msg}^{2})
-                     \\ \text{Where} \mu_{msg} = \frac{\sigma_{approx}^2\sigma_{denom}^2}{\sigma_{approx}^2-\sigma_{denom}^2}(\frac{\mu_{approx}}{\sigma_{approx}^2} - \frac{\mu_{denom}}{\sigma_{denom}^2})
-                      \text{and} \sigma_{msg} = \frac{\sigma_{approx}\sigma_{denom}}{\sqrt{\sigma_{approx}^2-\sigma_{denom}^2}}
+    \\ \text{Dividing a univariate Gaussian by another univariate Gaussian gives us yet another univariate Gaussian.}
+m_{t \to f}  &= \frac{\mathcal{N}(t;\mu_{msg},\sigma_{msg}^{2})}
     \end{align}
-
+    I've left out the nitty gritty details here for the sake of brevity but if you would like to follow them I go through
+    the derivation in finer detail in the appendix. The point is that we've now got a Gaussian message going from variable
+    $t$ to factor $f$!
 </p>
-
-
+<h2>
+    Finally our (approximate) Gaussian posterior!
+</h2>
+<p>
+    We now have a Gaussian message passed "up" from the variable $t$ to the factor $f$. Let's now revisit our factor graph
+    and complete the posterior calculation.
+</p>
+<h2>
+    Appendix
+</h2>
+<h3>
+    Moment matching approximation
+</h3>
+<h3>
+    Variable $t$ to factor $f$ detailed calculation
+</h3>
 
