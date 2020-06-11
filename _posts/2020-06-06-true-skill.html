@@ -182,6 +182,9 @@ date: 2020-06-06
 <h2>
     True Skill Factor Graph
 </h2>
+<h3>
+    Factor graph message passing
+</h3>
 <p>
     We can represent the toy model we described above with a factor graph that looks like this:
 <div class="row">
@@ -245,6 +248,9 @@ date: 2020-06-06
         </ol>
     </div>
 </div>
+<h3>
+    Another problem with our posterior..
+</h3>
 <p>
     A similar expression falls out for the updated skill marginal for $w_2$ by passing messages the other way.
     So we've got an expression for the posterior distributions for the skill variables having observed a game outcome, awesome.
@@ -253,6 +259,8 @@ date: 2020-06-06
     upon playing the next game our new posterior will be the product of this prior with another
     cumulative Gaussian, taking us up to two cumulative Gaussians, a third game and we'll be at three cumulative Gaussians and so
     on till the $n\mathrm{th}$ game where we'll have accumulated $n-1$ cumulative Gaussian factors.
+</p>
+<p>
     Each of these cumulative Gaussian factors has 2 parameters associated to it (as well as the original 2 parameters for the
     first Gaussian) and so after n games we will have
     $(n-1)*2+2=n$ parameters associated with a player's prior distribution. So the question is there a way to update the prior
@@ -260,8 +268,11 @@ date: 2020-06-06
     paper came up with a solution and that's what we'll talk about in the next section.
 </p>
 <h2>
-    Expectation Propogation
+    Expectation Propagation
 </h2>
+<h4>
+    Gaussian is good.
+</h4>
 <p>
     (I believe) the intuition for solving the problem we encountered above comes from the insight that if all our messages were Gaussian
     then when we multiplied them together the product would also be another Gaussian. So let's go back to our factor graph
@@ -279,6 +290,14 @@ date: 2020-06-06
     There's still one issue though, unfortunately the distribution that we are trying to moment match (the delta function)
     doesn't have a well defined variance. That doesn't stop the authors of TrueSkill though, they use a little trick that is
     my favourite part of the paper to get round this problem.
+</p>
+<h4>
+    A little trick
+</h4>
+<p>
+    The trick then is rather than making an approximation to the message directly, we make a Gaussian approximation to the
+    marginal distribution for the $t$ variable, $t=m_{f \to t} \times m_{t \to f}$.
+    <p>We already know what $m_{t \to f} is so let's quickl</p>
 </p>
 
 
