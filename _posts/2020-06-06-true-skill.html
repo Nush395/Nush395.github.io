@@ -22,8 +22,8 @@ date: 2020-06-06
     </a>
     by Jeff Moser which explains the intuition and a lot of the detail behind the equations very well. That article
     saved me a lot of pain by explaining some of the complicated concepts and likely explains most of what I'm going
-    to explain in this post. That said this is as much an exercise for me to check my understanding by explaining so
-    let's crack on anyway!
+    to explain in this post. That said it doesn't hurt to have multiple people explain the same topic and it would be a m
+    massive aid to check my understanding so let's crack on anyway!
 </p>
 <h2>
     An Intro to Ranking
@@ -38,23 +38,32 @@ date: 2020-06-06
     person that wins the most games against everyone individually is the best, I don't need a fancy algorithm to tell
     me that. It does however leave a lot of questions unanswered. How good is Player A? If they go and play someone who is
     the best in another office who should I be rationally favouring? Who's the second best in my office and how far away
-    from Player A are they? If I had a bunch of data points of matches between players and their outcomes I should be
-    able to answer these questions.
+    from Player A are they? In the spirit of Machine Learning it certainly feels like If I had a bunch of data points of game outcomes
+    between players I should be able to statistically model and learn an answer to these questions.
 </p>
     <h4>
         Skill
     </h4>
 <p>
-    That last question in particular points towards a way of answering these questions.
+    That last question, "how far away is another player from Player A?" in particular gives some insight towards a way of answering these questions.
     If we imagine that each player has some <i>skill</i> attribute that represents how good they are then we could look
-    at the relative difference between different players' skills to compare who is better but also how much better they
+    at the relative difference between different players' skills to compare not only who is better but also how much better they
     are. It also makes sense to model this <i>skill</i> attribute with a probability distribution as in the real world
     we're never going to know for certain what the exact value is but we could have a good idea of what the expectation
-    of that quantity is and how certain we are of our estimate. Awesome, so we know have a way of representing someone's
-    goodness at the game. The next bit is figuring out how we could model who to rationally bet on and also how we could
+    of that quantity is and how certain we are of our estimate.
+</p>
+<p>
+    Awesome, so with this notion of a <i>skill</i> attribute for each player, the next bit is figuring out how we could model who to rationally bet on and also how we could
     use that data of matches and game outcomes to better estimate a player's skill. To illustrate this in the next
-    chapter let's build a toy model of a game involving two players using this idea that each player has some skill value
-    and we expect a player with higher skill to win.
+    chapter let's build a toy model of a game involving two players built on two assumptions:
+    <ol>
+        <li>
+            Each player has some skill value.
+        </li>
+        <li>
+            We expect a player with higher skill to win a game.
+        </li>
+    </ol>
 </p>
 <h3>
     Toy model
