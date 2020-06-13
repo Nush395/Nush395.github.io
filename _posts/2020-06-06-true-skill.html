@@ -206,7 +206,7 @@ date: 2020-06-06
         <li>
             Messages from factors to variables are given by the factor multiplied by all incoming messages from attached variables (
             except the variable the message is going to be passed to) summed over all other attached variables.
-            $$m_{f \to x_1}(x_1) =  \Sigma_{x_2}\Sigma_{x_3} \dots \Sigma_{x_n}f(x_1,x_2 \dots x_n)\prod_{i \neq 1}m_{x_i \to f}$$
+            $$m_{f \to x_1}(x_1) =  \sum_{x_2}\sum_{x_3} \dots \sum_{x_n}f(x_1,x_2 \dots x_n)\prod_{i \neq 1}m_{x_i \to f}$$
         </li>
         <li>
             Marginals of a variable are the product of all incoming messages from factors to that variable.
