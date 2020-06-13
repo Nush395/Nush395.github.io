@@ -32,8 +32,8 @@ date: 2020-06-06
         An example
     </h4>
 <p>
-    This all started with me getting repeatedly thrashed at table football by the same person, let's call them Player A
-    over and over again. You don't have to feel sorry for me because everyone in my office gets repeatedly thrashed by
+    This all started with me getting repeatedly thrashed at table football by the same person (let's call them Player A),
+    over and over again. No need to feel sorry for me because everyone in my office gets repeatedly thrashed by
     Player A at table football. Occasionally one of us will get lucky and beat them but it's fairly obvious that the
     person that wins the most games against everyone individually is the best, I don't need a fancy algorithm to tell
     me that. It does however leave a lot of questions unanswered. How good is Player A? If they go and play someone who is
@@ -75,11 +75,11 @@ date: 2020-06-06
             Take Player 1 to have skill $w_1$ and  Player 2 to have skill $w_2$ ($w_i \in \mathbb{R}$).
         </li>
         <li>
-            Compute the difference in the player skills: $$s = w_1 - w_2$$
+            Compute the difference $s$ in the player skills with respect to Player 1: $$s = w_1 - w_2$$
         </li>
         <li>
-            Add some Gaussian noise ($n \sim \mathcal{N}(0,\,\sigma^{2}$)) to account for the uncertainty in the match:
-            $$t=s+n$$.
+            Add some Gaussian noise ($n \sim \mathcal{N}(0,\,\sigma^{2}$)) to account for the uncertainty in the match and compute the skill difference with noise $t$:
+            $$t=s+n$$
         </li>
         <li>
             We can say that the game outcome could be determined by $y=sign(t)$;
@@ -92,8 +92,9 @@ date: 2020-06-06
     Bayesian treatment of the model
 </h3>
 <p>
-    We can take a Bayesian treatment of this model by placing a prior probability over the
-    initial skills and then use the observed game outcome to compute the posterior probability
+    We can take a Bayesian treatment of this model by assuming an initial probability distribution (this is usually called the
+    prior probability) over the
+    initial skills and then use the observed game outcome to update our skill distributions (this is known as computing the posterior probability)
     of the skills given the game outcome using Bayes' theorem. Let's go ahead and do that then...
     <ol>
         <li>
