@@ -298,13 +298,13 @@ date: 2020-06-06
     The trick then is rather than making an approximation to the message directly, we make a Gaussian approximation to the
     marginal distribution for the $t$ variable.
     <p>We already know what $m_{t \to f}$ is so let's quickly derive the "downwards" message.</p>
-    $$m_{f \to t} = \mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})$$
+    $$m_{f \to t} = \mathcal{N}(t;\mu_1-\mu_2,1+\sigma_1^{2}+\sigma_2^{2})$$
     <button data-toggle="collapse" data-target="#convolution-derivation">Click to see derivation.</button>
     <div id="convolution-derivation" class="collapse">
         \begin{align}
         m_{f \to t} &= \iint \! \mathcal{N}(t;w_1-w_2,1)\mathcal{N}(w_1;\mu_1,\sigma_2^{2})\mathcal{N}(w_2;\mu_2,\sigma_2^{2}) \, \mathrm{d}w_1\mathrm{d}w_2
-                  \\  &= \int \! \mathcal{N}(t;\mu_1-w_2,\sqrt{1+\sigma_1^{2}})\mathcal{N}(w_2;\mu_2,\sigma_2^{2}) \, \mathrm{d}w_2
-                   \\ &= \mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})
+                  \\  &= \int \! \mathcal{N}(t;\mu_1-w_2,1+\sigma_1^{2})\mathcal{N}(w_2;\mu_2,\sigma_2^{2}) \, \mathrm{d}w_2
+                   \\ &= \mathcal{N}(t;\mu_1-\mu_2,1+\sigma_1^{2}+\sigma_2^{2})
         \end{align}
         Again making use of the result for the marginal distribution where the conditional
         and other marginal distribution are Gaussian. (See Chapter 2.3.3 of Bishops book.)
@@ -312,9 +312,9 @@ date: 2020-06-06
     <p>Now let's make our approximation to the marginal..</p>
     \begin{align}
         p(t) &= m_{f \to t} \times m_{t \to f}
-            \\ &= \delta(1-sign(t))\mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})
+            \\ &= \delta(1-sign(t))\mathcal{N}(t;\mu_1-\mu_2,1+\sigma_1^{2}+\sigma_2^{2})
           \\   &\approx \mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})
-    \\    m_{t \to f}  &=  \frac{\mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})}{\mathcal{N}(t;\mu_1-\mu_2,\sqrt{1+\sigma_1^{2}+\sigma_2^{2}})}
+    \\    m_{t \to f}  &=  \frac{\mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})}{\mathcal{N}(t;\mu_1-\mu_2,1+\sigma_1^{2}+\sigma_2^{2})}
 \\ m_{t \to f}  &= \mathcal{N}(t;\mu_{msg},\sigma_{msg}^{2})
     \end{align}
     I've left out the nitty gritty details here for the sake of brevity. Going from the second to the third line is where we
@@ -355,7 +355,7 @@ The point is that we've now got a Gaussian message going from variable $t$ to fa
                 We can now again pass a message from factor $f$ to the variable $w_1$.
                 \begin{align}
                     m_{f \to w_1} &= \iint \! \mathcal{N}(t;w_1-w_2,1)\mathcal{N}(t;\mu_{msg},\sigma_{msg}^{2})\mathcal{N}(w_2;\mu_2,\sigma_2^{2}) \, \mathrm{d}t\mathrm{d}w_2
-                              \\  &= \mathcal{N}(w_1;\mu_{msg}+\mu_2,\sqrt{1+\sigma_{msg}^{2}+\sigma_2^{2}})
+                              \\  &= \mathcal{N}(w_1;\mu_{msg}+\mu_2,1+\sigma_{msg}^{2}+\sigma_2^{2})
                 \end{align}
                 Again for the sake of not putting too much detail here I'll leave this derivation to the Appendix, but the most
                 important insight is we still have a Gaussian message.
@@ -365,7 +365,7 @@ The point is that we've now got a Gaussian message going from variable $t$ to fa
                 game factor.
                 \begin{align}
                 p(w_1) &= m_{f \to w_1} \times m_{prior \to w_1}
-                    \\   &= \mathcal{N}(w_1;\mu_{msg}+\mu_2,\sqrt{1+\sigma_{msg}^{2}+\sigma_2^{2}}) \mathcal{N}(w_1;\mu_1,\sigma_1})
+                    \\   &= \mathcal{N}(w_1;\mu_{msg}+\mu_2,1+\sigma_{msg}^{2}+\sigma_2^{2}) \mathcal{N}(w_1;\mu_1,\sigma_1})
                     \\   &= \mathcal{N}(w_1;\mu_{new},\sigma_{new})
                 \end{align}
                 Going from the second line to the final line we've used the result that multiplying two Gaussians also gives a Gaussian!
