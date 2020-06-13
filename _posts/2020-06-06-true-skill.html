@@ -143,19 +143,26 @@ date: 2020-06-06
     Even for this simple model we've arrived at something pretty ugly looking for our posterior. Our skill variables
     $w_1$ and $w_2$ have become correlated and it's not possible to factorise this distribution. It's not really obvious
     how we answer any of our above questions easily with a posterior like this. We'd also ideally like to be able to use
-    this posterior as the prior for these players in their next game but it's not possible to marginalise out either of
-    the player's skills. To proceed we'll have to take another approach but before we do, it will be useful to take a
+    this posterior as the prior for these players in their next game but even if we marginalise out one of the player skills
+    we will still have something more complicated (product of a Gaussian and a cumulative Gaussian) than our starting prior.
+    To proceed we'll have to take another approach but before we do, it will be useful to take a
     break to introduce the topic of Factor graphs, another concept used in the TrueSkill paper that I will talk about in
     the next section. If you're familiar with factor graphs then feel free to skip ahead!
 </p>
 <h2>
     Factor graphs and message passing
 </h2>
+<h4>
+    Intuition
+</h4>
 <p>
     One of the concepts that the TrueSkill paper introduced to me was that of factor graphs.
     <a href="https://en.wikipedia.org/wiki/Factor_graph">Factor graphs</a>
     are a type of probabilistic graphical model that allow us to represent the product factor structure of a function as
-    a bipartite graph of factors and their variables.
+    a bipartite graph of factors and their variables. We can draw our function as a graph which has factors (black boxes)
+    that operate locally on variables (white circles), with all the variables that a factor operates on connected to that
+    factor. We can then compute relevant quantities by passing messages between factors and variables, which I will briefly
+    explain below.
     We can take advantage of this structure to enable efficient computation using something called the Sum-Product
     algorithm. To get an intuition for why using the factor structure of a function is
     useful consider the calculation:
@@ -188,6 +195,30 @@ date: 2020-06-06
     By turning sums of products into products of sums we can get similar improvements in our marginalisation. To avoid
     making this post to long I'll simply encourage you to read about the theory behind factor graphs and the sum-product
     algorithm on your own and simply brush past to applying the concept to our toy model.
+</p>
+<h4>
+    Sum-product algorithm
+</h4>
+<p>
+    I'll quickly describe the three components of the sum-product message passing algorithm which will allow us to
+    proceed.
+    <ol>
+        <li>
+            Messages from factors to variables are given by the factor multiplied by all incoming messages from attached variables (
+            except the variable the message is going to be passed to) summed over all other attached variables.
+            $$m_{f \to x_1}(x_1) =  \Sigma_{x_2}\Sigma_{x_3} \dots \Sigma_{x_n}f(x_1,x_2 \dots x_n)\Pi_{i \neq 1}m_{x_i \to f}$$
+        </li>
+        <li>
+            Marginals of a variable are the product of all incoming messages from factors to that variable.
+            $$p(x) = \Pi_{f \in F_x} m_{f \to x}$$
+        </li>
+        <li>
+            Messages from variables to a factor are the product of all incoming messages from factors attached to that variable
+            except the factor to which the message is going to be passed.
+            $$m_{x \to f}(x) = \Pi_{f_j \in F_x\f} m_{f_j \to t}$$
+        </li>
+        Where I've used $F_x$ to denote the set of all factors attached to variable $x$.
+    </ol>
 </p>
 <h2>
     True Skill Factor Graph
