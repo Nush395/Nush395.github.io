@@ -100,17 +100,32 @@ date: 2020-06-06
         <li>
             Choosing a Gaussian distribution to represent the prior probabilities we have:
             $$w_i \sim \mathcal{N}(\mu_i,\,\sigma_i^{2})$$
+            Where $i$ denotes the Player identifier.
         </li>
         <li>
             If we take the game noise to have standard deviation of 1, $n \sim \mathcal{N}(0,\,1)$ for simplicity then,
             the likelihood is given by $$p(y|w_1,w_2) = \Phi(y(w_1-w_2))$$
+            Where $\Phi$ is the cumulative Gaussian distribution given by:
+            $$\Phi(x) = \int_{-\inf}^x \! \mathrm{e}^(\frac{-u^2}{2}) \, \mathrm{d}u$$
             <p>
             <button data-toggle="collapse" data-target="#likelihood-derivation">Click to see likelihood derivation</button>
             <div id="likelihood-derivation" class="collapse">
                 $$t = w_1 - w_2 + n \Rightarrow p(t|w_1,w_2) = \mathcal{N}(w_1-w_2,\,1)$$
                 As y is a binary variable let's work out each case:
                 $$p(y=1|w_1,w_2) = p(t>0|w_1,w_2) = \Phi(w_1-w_2)$$
-                $$p(y=-1|w_1,w_2) = p(t<0|w_1,w_2) = 1 - \Phi(w_1-w_2) = \Phi(-(w_1-w_2))$$
+                <button data-toggle="collapse" data-target="#phi-derivation">Click for more details.</button>
+                <div id="phi-derivation" class="collapse">
+                    \begin{align}
+                        p(t>0|w_1,w_2) &= \int_0^{\inf} \! p(t|w_1,w_2) \, \mathrm{d}t
+                        \\ &= \int_0^{\inf} \! \mathcal{N}(t|w_1-w_2,1) \, \mathrm{d}t
+                        \\ &= \int_0^{\inf} \! \mathrm{e}^{\frac{-(t-(w_1-w_2))^2}{2}} \, \mathrm{d}t
+                        \\ &= \int_{-\inf}^0 \! \mathrm{e}^{\frac{-(t-(w_1-w_2))^2}{2}} \, \mathrm{d}t
+                        \\ &= \int_{-\inf}^0 \! \mathrm{e}^{\frac{-v^2}{2}} \, \mathrm{d}v
+                        \\ &= \Phi(w_1-w_2)
+                    \end{align}
+                </div>
+
+                $$p(y=-1|w_1,w_2) = p(y \neq 1|w_1,w_2) = 1 - \Phi(w_1-w_2) = \Phi(-(w_1-w_2))$$
                 $$\therefore p(y|w_1,w_2) = \Phi(y(w_1-w_2))$$
             </div>
             </p>
@@ -141,10 +156,7 @@ date: 2020-06-06
 </h3>
 <p>
     Even for this simple model we've arrived at something pretty ugly looking for our posterior. Our skill variables
-    $w_1$ and $w_2$ have become correlated and it's not possible to factorise this distribution. It's not really obvious
-    how we answer any of our above questions easily with a posterior like this. We'd also ideally like to be able to use
-    this posterior as the prior for these players in their next game but even if we marginalise out one of the player skills
-    we will still have something more complicated (product of a Gaussian and a cumulative Gaussian) than our starting prior.
+    $w_1$ and $w_2$ have become correlated and it's not possible to factorise this distribution.
     To proceed we'll have to take another approach but before we do, it will be useful to take a
     break to introduce the topic of Factor graphs, another concept used in the TrueSkill paper that I will talk about in
     the next section. If you're familiar with factor graphs then feel free to skip ahead!
@@ -163,7 +175,7 @@ date: 2020-06-06
     that operate locally on variables (white circles), with all the variables that a factor operates on connected to that
     factor. We can then compute relevant quantities by passing messages between factors and variables, which I will briefly
     explain below.
-    We can take advantage of this structure to enable efficient computation using something called the Sum-Product
+    We can take advantage of this structure to enable efficient computation using something called the sum-product
     algorithm. To get an intuition for why using the factor structure of a function is
     useful consider the calculation:
     $$ab+ac$$
@@ -184,16 +196,16 @@ date: 2020-06-06
     Now we only have to do 2 operations.
     <ol>
         <li>
-            $b+c$
+            $b+c$.
         </li>
         <li>
-            Multiply the answer by a.
+            Multiply the answer by $a$.
         </li>
     </ol>
     Coming back to the the example at hand we will want to be able to get marginal distributions from our
     joint distribution of player skills and game outcomes which will involve summing over the joint distribution.
     By turning sums of products into products of sums we can get similar improvements in our marginalisation. To avoid
-    making this post to long I'll simply encourage you to read about the theory behind factor graphs and the sum-product
+    making this post too long I'll simply encourage you to read about the theory behind factor graphs and the sum-product
     algorithm on your own and simply brush past to applying the concept to our toy model.
 </p>
 <h3>
@@ -235,23 +247,22 @@ date: 2020-06-06
     <div class="col-sm-8" style="overflow-y: scroll; height:400px;">
         <p>
             Let's now again use this model and the sum product message passing algorithm to compute the
-            updated skill marginal for Player 1 in a game where Player 1 wins:
+            updated skill marginal for Player 1 in a game where Player 1 wins (a very similar sequence will give us the marginal
+            for Player 2):
         </p>
         <ol>
             <li>
-                First we pass messages from the prior factors to the variable $w_2$. This is simply:
+                First we pass messages from the prior factor attached to $w_2$ to the variable. This is simply:
                 $$m_{prior \to w_2}=\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2})$$
             </li>
             <li>
-                Next we compute the message from the skill variables $w_2$ to the game factor $g$, again this
-                is straightforward as messages from variable to a factor is simply the product of all incoming messages
-                to the variable except the incoming message from that factor. There's only one other incoming
+                Next we compute the message from the skill variables $w_2$ to the game factor $g$. There's only one other incoming
                 message to $w_i$, the message that just arrived from the prior factor, so we simply pass that on.
                 $$m_{w_2 \to f}=\mathcal{N}(w_2;\mu_2,\,\sigma_2^{2})$$
             </li>
             <li>
                 We know that Player 1 won so we must have observed a the game outcome of $y=1$. Therefore we also pass
-                a message from the game factor $k$ "up" to variable k.
+                a message from the outcome factor $g$ "up" to variable t.
                 $$m_{g \to t} = \delta(1-sign(t))$$
             </li>
             <li>
@@ -299,13 +310,13 @@ date: 2020-06-06
     game in which Player 1 plays. The problem that arises then is that because we have that pesky cumulative Gaussian left over
     upon playing the next game our new posterior will be the product of this prior with another
     cumulative Gaussian, taking us up to two cumulative Gaussians, a third game and we'll be at three cumulative Gaussians and so
-    on till the $n\mathrm{th}$ game where we'll have accumulated $n-1$ cumulative Gaussian factors.
+    on till the $n^{th}$ game where we'll have accumulated $n$ cumulative Gaussian factors.
 </p>
 <p>
     Each of these cumulative Gaussian factors has 2 parameters associated to it (as well as the original 2 parameters for the
-    first Gaussian) and so after n games we will have
-    $(n-1)*2+2=n$ parameters associated with a player's prior distribution. So the question is there a way to update the prior
-    without increasing the number of parameters required to model it. Well you won't be surprised that the folks that wrote the
+    first Gaussian) and so after n games we will have $n*2+2=n+2$ parameters associated with a player's prior distribution.
+    In other words the number of parameters required to represent a player's skill is $O(n)$.
+    So the question is: can we get that $O(n)$ down to $O(1)$ space for each player? Well you won't be surprised that the folks that wrote the
     paper came up with a solution and that's what we'll talk about in the next section.
 </p>
 <h2>
@@ -315,7 +326,7 @@ date: 2020-06-06
     Gaussian is good.
 </h4>
 <p>
-    (I believe) the intuition for solving the problem we encountered above comes from the insight that if all our messages were Gaussian
+    The intuition for solving the problem we encountered above comes (I believe) from the insight that if all our messages were Gaussian
     then when we multiplied them together the product would also be another Gaussian. So let's go back to our factor graph
     for the toy model and try and figure out where the non-Gaussian messages arose from. After a brief scroll up and down the page
     we're back and we see that it's step 3 in the above message passing that introduces the non-Gaussian message. If we want everything
@@ -353,8 +364,11 @@ date: 2020-06-06
     <p>Now let's make our approximation to the marginal..</p>
     \begin{align}
         p(t) &= m_{f \to t} \times m_{t \to f}
-            \\ &= \delta(1-sign(t))\mathcal{N}(t;\mu_1-\mu_2,1+\sigma_1^{2}+\sigma_2^{2})
+            \\ &= \mathcal{N}(t;\mu_1-\mu_2,1+\sigma_1^{2}+\sigma_2^{2})\delta(1-sign(t))
           \\   &\approx \mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})
+    \end{align}
+    \begin{align}
+        m_{t \to f} &= \frac{p(t)}{m_{f \to t}}
     \\    m_{t \to f}  &=  \frac{\mathcal{N}(t;\mu_{approx},\sigma_{approx}^{2})}{\mathcal{N}(t;\mu_1-\mu_2,1+\sigma_1^{2}+\sigma_2^{2})}
 \\ m_{t \to f}  &= \mathcal{N}(t;\mu_{msg},\sigma_{msg}^{2})
     \end{align}
@@ -427,22 +441,26 @@ The point is that we've now got a Gaussian message going from variable $t$ to fa
     Conclusions
 </h2>
 <p>
-    This has been a very brief summary of some parts of the TrueSkill paper. We're now armed with the knowledge of how to
-    update player's skill distributions given the outcomes of games. Now that we have a better idea of what a player's skill is
-    we can use that to answer some of those questions we asked at the beginning.
+    This has been a very brief summary of some parts of the TrueSkill paper. The paper describes a more general implementation
+    of the toy model we've been dealing with that extends to teams of players, multiple teams playing against each other and handles draws
+    to name a few of the details I've missed out here! I hope however that this has given you a broad intuition for the details
+    that will allow you to better understand those. Anyway now that we have a better idea of what a player's skill is
+    let's try and reanswer that to answer some of those questions we asked at the very start.
     <h4>
         Who to rationally bet on in a game
     </h4>
     <p>
     For example if two players with skills $w_1$ and $w_2$
-    play each other what is the probability that each one wins. That's simply the likelihood we calculated earlier $p(y|w_1,w_2)$.
+    play each other what is the probability that each one wins. That's simply the likelihood we calculated earlier:
+        $$p(y|w_1,w_2) = \Phi(y(w_1-w_2))$$
     </p>
     <h4>
         How can I rank players
     </h4>
-    <p>We can also use these skills to rank players. I believe that typically a single rating is taken from the marginal distribution
-        for a players skill as $\mu-3\sigma$ as then there is a 95% chance that the player's skill is greater than that value.
-        Once we have these point estimates they can then be used to rank the players in a given game in order.
+    <p>We can also use these skills to rank players. I believe what's done in the TrueSkill implementation is a point estimate
+        is taken from the marginal distribution
+        for a players skill as $\mu-3\sigma$ as then there is a 99.7% chance that the player's skill is greater than that value.
+        Once we have these point estimates they can then be used to rank the players in a leaderboard.
     </p>
     <h4>
         Other cool applications
@@ -454,6 +472,18 @@ The point is that we've now got a Gaussian message going from variable $t$ to fa
         to rank chess players across history, even though some were not even playing in the same time period! Check out the paper
         <a href="https://papers.nips.cc/paper/3331-trueskill-through-time-revisiting-the-history-of-chess.pdf">here.</a>
     </p>
+    <h3>
+        Next steps
+    </h3>
+    <p>One of the things that the TrueSkill algorithm doesn't model is the score difference between players. For example if Player A beat me
+    10-0 in a game I would expect their skill update to be greater than if they struggled out a win at 10-9. This is something that I will be
+    investigating and hopefully be able to talk about in a following blog post. Another thing I want to do is to use my
+        <a href="https://github.com/Nush395/TrueSkill">Python implementation</a> of TrueSkill to rank teams in the 2010 men's football world cup to try and predict the game outcomes in
+        the knockout stages. I especially want to see if I can outpredict
+        <a  href="https://en.wikipedia.org/wiki/Paul_the_Octopus">Paul the octopus</a>
+        because if I can't then
+        really what's the point in learning all these Bayesian techniques, when I should be learning more about octopi.
+    </p>
 </p>
 <h2>
     Appendix
@@ -464,4 +494,23 @@ The point is that we've now got a Gaussian message going from variable $t$ to fa
 <h3>
     Variable $t$ to factor $f$ detailed calculation
 </h3>
+<h2>
+    References
+</h2>
+<p>
+    <ol>
+        <li>
+            Rasmussen lectures
+        </li>
+        <li>
+            TrueSkill paper
+        </li>
+        <li>
+            Jeff Moser
+        </li>
+        <li>
+            Bishop
+        </li>
+    </ol>
+</p>
 
