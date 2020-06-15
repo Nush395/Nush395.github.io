@@ -5,12 +5,20 @@ title: Projects
 <div style="margin:0px 150px 0px 150px;">
 	<h2 style="text-align: center;">{{ page.title }}</h2>
 	<ul class="posts">
-		{% for post in site.posts %}
+		<!--{% for post in site.posts %}-->
 		<p>
-			<a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-			An implementation of the TrueSkill ranking algorithm for ratings teams of players
-			and a blog post I wrote to explain some of the intuition behind the paper.
+			<a href="https://nush395.github.io/2020/06/06/true-skill.html" title="Understanding TrueSkill">
+				Understanding TrueSkill
+			</a>
+			<br>
+			I was quite interested in ranking players and also learning Bayesian Machine Learning and
+			this was the perfect opportunity to do both. The post above explains some of the theory
+			in the paper and I also implemented the TrueSkill algorithm myself:
+			<br>
+			<i class="fa fa-github"></i><a href="https://github.com/Nush395/TrueSkill">
+				Python implementation of TrueSkill
+			</a>
 		</p>
-		{% endfor %}
+		<!--{% endfor %}-->
 	</ul>
 </div>
