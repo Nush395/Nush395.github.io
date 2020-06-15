@@ -12,18 +12,26 @@ date: 2020-06-06
     someone else then I'll finally have completed  my journey in understanding the TrueSkill algorithm.
     This post is an accompaniment to the open source
     <a href="https://github.com/Nush395/TrueSkill">Python implementation</a>
-    I created where I replicated the
-    <a href="https://www.microsoft.com/en-us/research/publication/trueskilltm-a-bayesian-skill-rating-system/">
-        original paper.
-    </a>
-    Along with the original paper another really helpful resource I'd thoroughly encourage you to check out is this
-    <a href="https://www.moserware.com/assets/computing-your-skill/The%20Math%20Behind%20TrueSkill.pdf">
-        article
-    </a>
-    by Jeff Moser which explains the intuition and a lot of the detail behind the equations very well. That article
-    saved me a lot of pain by explaining some of the complicated concepts and likely explains most of what I'm going
-    to explain in this post. That said it doesn't hurt to have multiple people explain the same topic and it would be a m
-    massive aid to check my understanding so let's crack on anyway!
+    I created where I replicated the original paper [1].
+</p>
+<h4>
+    Other helpful resources
+</h4>
+<p>
+    Along with the original paper two other really helpful resources that I found were:
+    <ol>
+        <li>
+            A lecture course given by Prof. Rasmussen at the University of Cambridge [2].  A lot of the construction in
+            this post follows those lectures and I'd encourage you to check them out!
+        </li>
+        <li>
+            I'd also thoroughly encourage you to check out is an article
+    by Jeff Moser [3] which explains the intuition and a lot of the detail behind the equations very well.
+        </li>
+    </ol>
+I'm very grateful to have found both those resources and they likely explain everything I'm going to explain in this post
+but That said it doesn't hurt to have multiple people explain the same topic and it would be a massive aid to check my
+understanding if I can explain it myself so let's crack on anyway!
 </p>
 <h2>
     An Intro to Ranking
@@ -285,7 +293,8 @@ date: 2020-06-06
                                    \\   &= \Phi(\frac{\mu_2-w_1}{\sqrt{\sigma_2^{2}+1}})
                     \end{align}
                     Going from the second to third line I've used the result for the marginal distribution where the conditional
-                    and other marginal distribution are Gaussian. (See Chapter 2.3.3 of Bishops book.)
+                    and other marginal distribution are Gaussian. The proof and result can be found in Chapter 2.3.3 of
+                    [4].
                 </div>
             </li>
             <li>
@@ -359,7 +368,7 @@ date: 2020-06-06
                    \\ &= \mathcal{N}(t;\mu_1-\mu_2,1+\sigma_1^{2}+\sigma_2^{2})
         \end{align}
         Again making use of the result for the marginal distribution where the conditional
-        and other marginal distribution are Gaussian. (See Chapter 2.3.3 of Bishops book.)
+        and other marginal distribution are Gaussian from Chapter 2.3.3 of [4].
     </div>
     <p>Now let's make our approximation to the marginal..</p>
     \begin{align}
@@ -469,8 +478,7 @@ The point is that we've now got a Gaussian message going from variable $t$ to fa
         One of the really fascinating implications of this modelling approach to estimating skills is that two players don't actually
         have to play each other for us to be able to rank them against each other. Players are simply ranked according to their
         performance against other players. A cool application of this was done by the Microsoft Research team who used TrueSkill
-        to rank chess players across history, even though some were not even playing in the same time period! Check out the paper
-        <a href="https://papers.nips.cc/paper/3331-trueskill-through-time-revisiting-the-history-of-chess.pdf">here.</a>
+        to rank chess players across history [5], even though some were not even playing in the same time period!
     </p>
     <h3>
         Next steps
@@ -498,22 +506,25 @@ The point is that we've now got a Gaussian message going from variable $t$ to fa
 <h2>
     References
 </h2>
-<br>
 [1] Ralf Herbrich, Tom Minka, and Thore Graepel. TrueskillTM: a bayesian skill rating
 system. In Advances in neural information processing systems, pages 569–576, 2007.
+<br>
 <br>
 [2] Professor Carl Edward Rasmussen. Lecture notes. Probabilistic machine
 learning, 4F13. October 2019. University of Cambridge. [Online] Available from:
 http://mlg.eng.cam.ac.uk/teaching/4f13/1920/
 <br>
+<br>
 [3] Moser J. The Math Behind TrueSkill. 2011. [Online] Available from:
 https://www.moserware.com/assets/computing-your-skill/The%20Math%20Behind%20TrueSkill.pdf
 [Accessed 14 June 2020].
 <br>
+<br>
 [4] Bishop, Christopher M. Pattern Recognition and Machine Learning, 4 \textsuperscript{th}
 edition. New York: Springer, 2006.
 <br>
-[5]] P. Dangauthier, R. Herbrich, T. Minka, and
+<br>
+[5] P. Dangauthier, R. Herbrich, T. Minka, and
 T. Graepel. Trueskill through time: Revisiting the
 history of chess. In Advances in Neural Information
 Processing Systems 20, pages 337–344, 2008.
