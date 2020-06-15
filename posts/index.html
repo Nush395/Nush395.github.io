@@ -1,14 +1,16 @@
 ---
 layout: default
-title: Anushan Fernando Blog Posts
+title: Projects
 ---
-        <h1>{{ page.title }}</h1>
-        <ul class="posts">
-			{% for post in site.posts %}
-			<li>
-				<span>{{ post.date | date_to_string }}</span>
-				»
-				<a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-			</li>
-			{% endfor %}
-		</ul>
+<div style="margin:0px 150px 0px 150px;">
+	<h2 style="text-align: center;">{{ page.title }}</h2>
+	<ul class="posts">
+		{% for post in site.posts %}
+		<p>
+			<a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+			An implementation of the TrueSkill ranking algorithm for ratings teams of players
+			and a blog post I wrote to explain some of the intuition behind the paper.
+		</p>
+		{% endfor %}
+	</ul>
+</div>
