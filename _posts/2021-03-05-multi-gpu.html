@@ -15,7 +15,7 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     decent documentation I was looking for a simpler way to run a sequence of <code>Tensorflow</code> operations across
     multiple devices without using a <code>tf.distribute.Strategy</code> and that's what I'll document below.
 </p>
-<pre>
+<pre class="python">
     <code>
         @tf.function
         def custom_computation():
