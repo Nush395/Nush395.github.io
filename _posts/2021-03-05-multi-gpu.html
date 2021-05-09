@@ -1,10 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+---
+layout: post
+title: "Using multiple GPUs with Tensorflow"
+date: 2021-03-05
+---
+<h2>
+    Overview
+</h2>
+<p>
+    I recently investigated using multiple GPUs using <code>Tensorflow<code>. There's a bunch of
+    <a href="https://www.tensorflow.org/guide/distributed_training">useful documentation</a> for doing
+    disstributed training with TF. The <code>tf.distribute.Strategy</code> API is extremely powerful already and
+    seems to be getting better release on release. It has a lot of support for <code>Keras</code> models. It also works
+    with custom training loops and general <code>Tensorflow</code> backed computation. Nonetheless, though there is
+    decent documentation I was looking for a simpler way to run a sequence of <code>Tensorflow</code> operations across
+    multiple devices without using a <code>tf.distribute.Strategy</code> and that's what I'll document below.
+</p>
