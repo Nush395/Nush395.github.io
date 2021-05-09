@@ -17,7 +17,11 @@ h1, h2, h3, h4, h5, h6 {
 p.big {
   line-height: 1.8;
 }
-pre {
-    white-space: pre-wrap;
+
+pre code {
+  background-color: #eee;
+  border: 1px solid #999;
+  display: block;
+  padding: 20px;
 }
 

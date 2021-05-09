@@ -11,24 +11,22 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     <a href="https://www.tensorflow.org/guide/distributed_training">useful documentation</a> for doing
     distributed training with TF. The <code>tf.distribute.Strategy</code> API is extremely powerful already and
     seems to be getting better release on release. It has a lot of support for <code>Keras</code> models. It also works
-    with custom training loops and general <code>Tensorflow</code> backed computation. Nonetheless, though there is
-    decent documentation I was looking for a simpler way to run a sequence of <code>Tensorflow</code> operations across
-    multiple devices without using a <code>tf.distribute.Strategy</code> and that's what I'll document below. I'm going
+    with custom training loops and general <code>Tensorflow</code> backed computation. As the docs
+    <a href="https://www.tensorflow.org/guide/distributed_training#using_tfdistributestrategy_with_custom_training_loops">say</a>
+    however this requires a bit more effort. The following is a method I found of using multiple GPUs without
+    <code>tf.distribute.Strategy</code> that I found useful for simple cases that I thought I'd share. I'm going
     to illustrate with an example that takes advantage of data parallelism but the principle can be applied to
-    model parallelism too.
+    model parallelism too. I'm going to assume some familiarity with terminology in what follows but if needed the
+    docs above are very good at introducing ways GPU parallelism can be achieved.
 </p>
 <h2>
     Example - data parallelism
 </h2>
 <p>
-    Say we have some <code>TF</code> operations that take in a batch of input data. As we are going to exploit data
-    parallelism, let's say our function can work on each sample in the batch individually. We're currently exploiting
-    a GPU to accelerate these operations (why a GPU over a CPU is an interesting question itself but
-    not focus of this.) but it's still running too slowly. If you have multiple GPU devices available on your host
-    then out of the box <code>Tensorflow</code> will pick the lowest index one by default and all the others will be
-    left alone.
+    Say we have a function of <code>TF</code> operations that take in a batch of input data. As we are going to exploit data
+    parallelism, we assume our function can work on each sample in the batch individually.
 </p>
-<pre class="python">
+<pre class="python" margin="0.3">
     <code>
         import tensorflow as tf
 
@@ -39,6 +37,12 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
             return output_data
     </code>
 </pre>
+<p>
+    We're currently exploiting
+    a GPU to accelerate these operations but it's still running too slowly.
+    If you have multiple GPU devices available on your host then out of the box <code>Tensorflow</code> will pick the lowest index one by default and all the others will be
+    left alone.
+</p>
 <h2>
     GPU utilisation
 </h2>
@@ -48,7 +52,7 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     isn't high then your operations aren't currently a good candidate for exploiting other GPUs as you're better off trying
     to use the single one more efficiently first. The simplest way
     to check this is to use <code>nvidia-smi</code>. Running the below will snapshot information about your GPUs every
-    <code>num_secs</code> seconds and you can visually tell whether the utilisation is where it needs to be. If so,
+    <code>num_secs</code> seconds and allow you to tell whether the utilisation is where it needs to be. If so,
     great, crack onto the next stage! If not there is some
     <a href="https://www.tensorflow.org/guide/gpu_performance_analysis">useful documentation</a>
     on how to increase that utilisation.
@@ -61,6 +65,9 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
 <h2>
     Using <code>tf.device</code>
 </h2>
+<h4>
+    Get a list of available devices
+</h4>
 <p>
     <code>Tensorflow</code>
     <a href="https://www.tensorflow.org/api_docs/python/tf/device">provides</a>
@@ -72,6 +79,9 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
         gpus = tf.config.list_physical_devices('gpu')
     </code>
 </pre>
+<h4>
+    Pin to single device
+</h4>
 <p>
     We can now explicitly pin our operation to any GPU we want. For example let's imagine we have
     2 GPUs available and pin the above operations to the second one (indexed by 1).
@@ -83,6 +93,9 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
             big_batch_operation(input_data)
     </code>
 </pre>
+<h4>
+    Run on multiple devices (sequentially)
+</h4>
 <p>
     It's as easy as that, I really like how <code>Tensorflow</code> enables you device access so easily.
     Now we can use multiple GPUs at the same time!
@@ -97,6 +110,9 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
                 expensive_operation(batch)
     </code>
 </pre>
+<h4>
+    Run on multiple devices in parallel!
+</h4>
 <p>
     Hang on a sec. With <code>Tensorflow</code> running in eager execution mode (as it does by default). This
     will just run on each of the GPUs sequentially. There is a
@@ -120,12 +136,15 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     On the first call of the <code>tf.function</code> we have to pay a cost to compile the graph but usually
     this shouldn't be too bad..
 </p>
+<h4>
+    Capturing output
+</h4>
 <p>
-    The last piece that's worth mentioning explicitly is about capturing output. Clearly the section above
-    is parallelising our work but we do want to capture our output. As we're now working inside graph mode
+    The last piece that's worth mentioning explicitly is about capturing output. As we're now working inside graph mode
     we can't simply append outputs to a list, as <code>Python</code> side effects are only executed
     on the first iteration of the graph (at compile time). One solution to this is to use a
-    <code>tf.TensorArray</code> to store our outputs. A quick example would be..
+    <code>tf.TensorArray</code> instead of a <code>Python</code> list to store our outputs.
+    As a quick example..
 </p>
 <pre class="python">
     <code>
