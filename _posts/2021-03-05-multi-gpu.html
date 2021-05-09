@@ -26,6 +26,7 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     Say we have a function of <code>TF</code> operations that take in a batch of input data. As we are going to exploit data
     parallelism, we assume our function can work on each sample in the batch individually.
 </p>
+<pre>
     <code class="python">
         import tensorflow as tf
 
@@ -34,7 +35,7 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
             ...
 
             return output_data
-    </code>
+    </code></pre>
 <p>
     We're currently exploiting
     a GPU to accelerate these operations but it's still running too slowly.
@@ -55,7 +56,7 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     <a href="https://www.tensorflow.org/guide/gpu_performance_analysis">useful documentation</a>
     on how to increase that utilisation.
 </p>
-<pre class="bash">
+<pre>
     <code>
         nvidia-smi watch -n num_secs
     </code>
@@ -72,7 +73,7 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     the <code>tf.device</code> context manager for manually pinning operations to a certain device.
     To get a list of what GPU devices you have available by name use:
 </p>
-<pre class="python">
+<pre>
     <code>
         gpus = tf.config.list_physical_devices('gpu')
     </code>
@@ -84,7 +85,7 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     We can now explicitly pin our operation to any GPU we want. For example let's imagine we have
     2 GPUs available and pin the above operations to the second one (indexed by 1).
 </p>
-<pre class="python">
+<pre>
     <code>
         gpus = tf.config.list_physical_devices('gpu')
         with tf.device(gpus[1].name):
@@ -98,7 +99,7 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     It's as easy as that, I really like how <code>Tensorflow</code> enables you device access so easily.
     Now we can use multiple GPUs at the same time!
 </p>
-<pre class="python">
+<pre>
     <code>
         gpus = tf.config.list_physical_devices('gpu')
         num_gpus = len(gpus)
