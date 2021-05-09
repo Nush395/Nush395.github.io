@@ -13,13 +13,57 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     seems to be getting better release on release. It has a lot of support for <code>Keras</code> models. It also works
     with custom training loops and general <code>Tensorflow</code> backed computation. Nonetheless, though there is
     decent documentation I was looking for a simpler way to run a sequence of <code>Tensorflow</code> operations across
-    multiple devices without using a <code>tf.distribute.Strategy</code> and that's what I'll document below.
+    multiple devices without using a <code>tf.distribute.Strategy</code> and that's what I'll document below. I'm going
+    to illustrate with an example that takes advantage of data parallelism but the principle can be applied to
+    model parallelism too.
+</p>
+<h2>
+    Example - data parallelism
+</h2>
+<p>
+    Say we have some <code>TF</code> operations that take in a batch of input data. As we are going to exploit data
+    parallelism, let's say our function can work on each sample in the batch individually. We're currently exploiting
+    a GPU to accelerate these operations (why a GPU over a CPU is an interesting question itself but
+    not focus of this.) but it's still running too slowly. We have access to multiple GPU devices on our host machine
+    and are wondering how to use them to speed up this process.
 </p>
 <pre class="python">
     <code>
-        @tf.function
-        def custom_computation():
-            # define operations
-            pass
+        import tensorflow as tf
+
+        def big_batch_operation(input_data: tf.Tensor):
+            """Beastly function that does a bunch of expensive operations on input.
+            Args:
+                input_data: Has shape (batch_size, ...)
+            """
+            # some expensive operations
+            ...
+
+            return batch_output_data
     </code>
 </pre>
+<h2>
+    GPU utilisation
+</h2>
+<p>
+    The first thing we will want to do to check if our function is using that single GPU efficiently. Ideally we want
+    GPU utilisation to be over 90% (this means over 90% of the cores on the GPU are doing something). If GPU utilisation
+    isn't high then your operations aren't currently a good candidate for exploiting other GPUs as you're better off trying
+    to use the single one more efficiently first. The simplest way
+    to check this is to use <code>nvidia-smi</code>. Running the below will snapshot information about your GPUs every
+    <code>num_secs</code> seconds and you can visually tell whether the utilisation is where it needs to be. If so,
+    great, crack onto the next stage! If not there is some
+    <a href="https://www.tensorflow.org/guide/gpu_performance_analysis">useful documentation</a>
+    on how to increase that utilisation.
+</p>
+<pre class="bash">
+    <code>
+        nvidia-smi watch -n num_secs
+    </code>
+</pre>
+<h2>
+    Using <code>tf.device</code>
+</h2>
+<p>
+
+</p>
