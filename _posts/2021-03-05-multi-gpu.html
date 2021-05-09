@@ -26,8 +26,7 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     Say we have a function of <code>TF</code> operations that take in a batch of input data. As we are going to exploit data
     parallelism, we assume our function can work on each sample in the batch individually.
 </p>
-<pre class="python" margin="0.3">
-    <code>
+    <code class="python">
         import tensorflow as tf
 
         def expensive_operation(input_data: tf.data.Dataset):
@@ -36,7 +35,6 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
 
             return output_data
     </code>
-</pre>
 <p>
     We're currently exploiting
     a GPU to accelerate these operations but it's still running too slowly.
