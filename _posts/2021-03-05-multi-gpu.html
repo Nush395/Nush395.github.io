@@ -24,22 +24,19 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     Say we have some <code>TF</code> operations that take in a batch of input data. As we are going to exploit data
     parallelism, let's say our function can work on each sample in the batch individually. We're currently exploiting
     a GPU to accelerate these operations (why a GPU over a CPU is an interesting question itself but
-    not focus of this.) but it's still running too slowly. We have access to multiple GPU devices on our host machine
-    and are wondering how to use them to speed up this process.
+    not focus of this.) but it's still running too slowly. If you have multiple GPU devices available on your host
+    then out of the box <code>Tensorflow</code> will pick the lowest index one by default and all the others will be
+    left alone.
 </p>
 <pre class="python">
     <code>
         import tensorflow as tf
 
-        def big_batch_operation(input_data: tf.Tensor):
-            """Beastly function that does a bunch of expensive operations on input.
-            Args:
-                input_data: Has shape (batch_size, ...)
-            """
-            # some expensive operations
+        def expensive_operation(input_data: tf.data.Dataset):
+            """Beastly function that does a bunch of expensive operations on input."""
             ...
 
-            return batch_output_data
+            return output_data
     </code>
 </pre>
 <h2>
@@ -65,5 +62,86 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     Using <code>tf.device</code>
 </h2>
 <p>
-
+    <code>Tensorflow</code>
+    <a href="https://www.tensorflow.org/api_docs/python/tf/device">provides</a>
+    the <code>tf.device</code> context manager for manually pinning operations to a certain device.
+    To get a list of what GPU devices you have available by name use:
 </p>
+<pre class="python">
+    <code>
+        gpus = tf.config.list_physical_devices('gpu')
+    </code>
+</pre>
+<p>
+    We can now explicitly pin our operation to any GPU we want. For example let's imagine we have
+    2 GPUs available and pin the above operations to the second one (indexed by 1).
+</p>
+<pre class="python">
+    <code>
+        gpus = tf.config.list_physical_devices('gpu')
+        with tf.device(gpus[1].name):
+            big_batch_operation(input_data)
+    </code>
+</pre>
+<p>
+    It's as easy as that, I really like how <code>Tensorflow</code> enables you device access so easily.
+    Now we can use multiple GPUs at the same time!
+</p>
+<pre class="python">
+    <code>
+        gpus = tf.config.list_physical_devices('gpu')
+        num_gpus = len(gpus)
+        batch_data = input_data.batch(num_gpus)
+        for batch, gpu in zip(batch_data, gpus):
+            with tf.device(gpu.name):
+                expensive_operation(batch)
+    </code>
+</pre>
+<p>
+    Hang on a sec. With <code>Tensorflow</code> running in eager execution mode (as it does by default). This
+    will just run on each of the GPUs sequentially. There is a
+    <a href="https://www.tensorflow.org/guide/gpu#manual_placement">section</a>
+    in the <code>Tensorflow</code> docs that describes the above too.
+    The trick here is to run in graph mode and then everything will run in parallel.
+</p>
+<pre class="python">
+    <code>
+        @tf.function
+        def parallel_expensive_operation(input_data: tf.data.Dataset):
+            gpus = tf.config.list_physical_devices('gpu')
+            num_gpus = len(gpus)
+            batch_data = input_data.batch(num_gpus)
+            for batch, gpu in zip(batch_data, gpus):
+                with tf.device(gpu.name):
+                    expensive_operation(batch)
+    </code>
+</pre>
+<p>
+    On the first call of the <code>tf.function</code> we have to pay a cost to compile the graph but usually
+    this shouldn't be too bad..
+</p>
+<p>
+    The last piece that's worth mentioning explicitly is about capturing output. Clearly the section above
+    is parallelising our work but we do want to capture our output. As we're now working inside graph mode
+    we can't simply append outputs to a list, as <code>Python</code> side effects are only executed
+    on the first iteration of the graph (at compile time). One solution to this is to use a
+    <code>tf.TensorArray</code> to store our outputs. A quick example would be..
+</p>
+<pre class="python">
+    <code>
+        @tf.function
+        def parallel_expensive_operation(input_data: tf.data.Dataset):
+            gpus = tf.config.list_physical_devices('gpu')
+            num_gpus = len(gpus)
+
+            results_container = tf.TensorArray(
+                dtype=...,
+                size=num_gpus,
+                infer_shape=False,  # Required for different shape Tensors given by data shard.
+            )
+            batch_data = input_data.batch(num_gpus)
+            for i, (batch, gpu) in enumerate(zip(batch_data, gpus)):
+                with tf.device(gpu.name):
+                    results_container = results_container.write(i, expensive_operation(batch))
+    </code>
+</pre>
