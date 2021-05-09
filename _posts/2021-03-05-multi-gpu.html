@@ -51,16 +51,17 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     isn't high then your operations aren't currently a good candidate for exploiting other GPUs as you're better off trying
     to use the single one more efficiently first. The simplest way
     to check this is to use <code>nvidia-smi</code>. Running the below will snapshot information about your GPUs every
-    <code>num_secs</code> seconds and allow you to tell whether the utilisation is where it needs to be. If so,
-    great, crack onto the next stage! If not there is some
-    <a href="https://www.tensorflow.org/guide/gpu_performance_analysis">useful documentation</a>
-    on how to increase that utilisation.
+    <code>num_secs</code> seconds and allow you to tell whether the utilisation is where it needs to be.
 </p>
 <pre>
     <code>
         nvidia-smi watch -n num_secs
     </code>
 </pre>
+If so,
+    great, crack onto the next stage! If not there is some
+    <a href="https://www.tensorflow.org/guide/gpu_performance_analysis">useful documentation</a>
+    on how to increase that utilisation.
 <h2>
     Using <code>tf.device</code>
 </h2>
@@ -89,7 +90,7 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
     <code>
         gpus = tf.config.list_physical_devices('gpu')
         with tf.device(gpus[1].name):
-            big_batch_operation(input_data)
+            expensive_operation(input_data)
     </code>
 </pre>
 <h4>
@@ -163,3 +164,14 @@ I recently investigated using multiple GPUs using <code>Tensorflow</code>. There
                     results_container = results_container.write(i, expensive_operation(batch))
     </code>
 </pre>
+<h2>
+    That's it!
+</h2>
+<p>
+    There a couple of things to be wary of when using multiple GPUs. For example
+    any <code>tf.Variable</code>s are created on a specific device. On a multi-gpu host this will be the GPU with the
+    lowest index unless specified otherwise. Depending on the data transfer speed between your GPU devices this can be
+    quite important as it means that variables need to be read from one GPU device to another. If for example your data
+    transfer speed is slow and a variable is read across devices many times we want to avoid this. I may write about
+    that in a seperate blog post but hopefully this has been useful for now! Thanks for reading :)
+</p>
