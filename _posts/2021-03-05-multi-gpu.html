@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Using multiple GPUs with Tensorflow"
-date: 2021-03-05
+date: 2021-05-03
 ---
 <h2>
     Overview
@@ -173,5 +173,10 @@ If so,
     lowest index unless specified otherwise. Depending on the data transfer speed between your GPU devices this can be
     quite important as it means that variables need to be read from one GPU device to another. If for example your data
     transfer speed is slow and a variable is read across devices many times we want to avoid this. I may write about
-    that in a seperate blog post but hopefully this has been useful for now! Thanks for reading :)
+    that in a seperate blog post but hopefully this has been useful for now! If you're interested in doing
+    distributed computations two more useful things to check out are
+    <a href="https://github.com/google/jax">Jax</a>
+    and
+    <a href="https://ray.io">Ray</a>.
+    Thanks for reading :)
 </p>
